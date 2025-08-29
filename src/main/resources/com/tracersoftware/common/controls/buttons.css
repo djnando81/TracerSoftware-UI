@@ -1,0 +1,139 @@
+/* Botón tipo formulario: alargado, bajo, ancho 100% */
+.form-button {
+    /* JavaFX properties */
+    -fx-pref-width: 100%;
+    -fx-min-width: 220px;
+    -fx-max-width: 360px;
+    -fx-min-height: 32px;
+    -fx-max-height: 36px;
+    -fx-padding: 8 0;
+    -fx-font-size: 15px;
+    -fx-font-family: 'Segoe UI', 'Arial', sans-serif;
+    -fx-background-radius: 8;
+    /* Standard CSS for compatibility */
+    width: 100%;
+    min-width: 220px;
+    max-width: 360px;
+    min-height: 32px;
+    max-height: 36px;
+    padding: 8px 0;
+    font-size: 15px;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    border-radius: 8px;
+}
+/* Global button styles for TracerSoftware JavaFX app */
+
+/* Modern flat blue button */
+.button-blue {
+    -fx-background-color: #1976d2;
+    -fx-text-fill: #fff;
+    -fx-background-radius: 8;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-padding: 10 28;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8;
+    -fx-effect: none;
+    -fx-focus-color: #1565c0;
+    -fx-faint-focus-color: #e3eafc;
+    -fx-border-width: 2;
+    -fx-transition: background-color 0.2s;
+}
+.button-blue:hover {
+    -fx-background-color: #1565c0;
+}
+.button-blue:focused {
+    -fx-border-color: #1565c0;
+}
+
+.button-red {
+    -fx-background-color: #d32f2f;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.18), 2,0,0,1);
+}
+.button-red:hover {
+    -fx-background-color: #b71c1c;
+}
+
+.button-green {
+    -fx-background-color: #388e3c;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(56,142,60,0.18), 2,0,0,1);
+}
+.button-green:hover {
+    -fx-background-color: #2e7d32;
+}
+
+.button-yellow {
+    -fx-background-color: #fbc02d;
+    -fx-text-fill: #333;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(251,192,45,0.18), 2,0,0,1);
+}
+.button-yellow:hover {
+    -fx-background-color: #f9a825;
+}
+
+.button-gray {
+    -fx-background-color: #757575;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(117,117,117,0.18), 2,0,0,1);
+}
+.button-gray:hover {
+    -fx-background-color: #424242;
+}
+
+.button-purple {
+    -fx-background-color: #7b1fa2;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(123,31,162,0.18), 2,0,0,1);
+}
+.button-purple:hover {
+    -fx-background-color: #4a148c;
+}
+
+.button {
+    -fx-padding: 8 18 8 18;
+    -fx-font-size: 14px;
+    -fx-border-width: 0;
+    -fx-transition: all 0.2s;
+}
+
+/* Utility small buttons used in tables */
+.btn-small {
+    -fx-font-size: 12px;
+    -fx-padding: 4 8;
+    -fx-background-radius: 6;
+}
+
+/* Semantic aliases */
+.btn-primary { -fx-background-color: #1976d2; -fx-text-fill: #fff; }
+.btn-warning { -fx-background-color: #fbc02d; -fx-text-fill: #222; }
+.btn-danger  { -fx-background-color: #d32f2f; -fx-text-fill: #fff; }
+
+/* Icon helper: small square area with centered glyph */
+.icon-btn {
+    -fx-padding: 4 6;
+    -fx-font-family: 'Segoe UI Symbol', 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+}
+
+/* minimal focus/hover states */
+.btn-small:hover, .btn-primary:hover, .btn-warning:hover, .btn-danger:hover {
+    -fx-opacity: 0.95;
+}

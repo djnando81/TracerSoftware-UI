@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.usuarios.UsuarioFormController">
+    <center>
+    <StackPane>
+        <GridPane hgap="8" vgap="8">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12" />
+            </padding>
+            <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+            <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+            <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+            <TextField fx:id="txtEmail" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+            <Label text="Rol:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+            <ComboBox fx:id="cboRol" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+            <Label text="Activo:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+            <CheckBox fx:id="chkActivo" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+            <!-- Mensaje de error -->
+            <Label fx:id="lblError" textFill="red" wrapText="true" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2" />
+
+            <HBox spacing="8" GridPane.rowIndex="4" GridPane.columnIndex="1" >
+                <ProgressIndicator fx:id="progress" prefWidth="20" prefHeight="20" visible="false" />
+                <Button fx:id="btnSave" text="Guardar" />
+                <Button fx:id="btnCancel" text="Cancelar" />
+            </HBox>
+        </GridPane>
+
+        <!-- overlay spinner shown while saving -->
+        <AnchorPane fx:id="overlay" visible="false" pickOnBounds="false" style="-fx-background-color: rgba(0,0,0,0.35);">
+            <children>
+                <ProgressIndicator fx:id="overlayProgress" prefWidth="64" prefHeight="64" />
+            </children>
+        </AnchorPane>
+    </StackPane>
+    </center>
+</BorderPane>

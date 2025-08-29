@@ -1,0 +1,1950 @@
+======= DOCUMENTACIÓN DE ENDPOINTS - TRACERSOFTWARE.API =======
+Generado: 2025-08-15 14:23:23
+
+=============================================================
+📘 AdminController – /api/admin
+=============================================================
+Gestiona admins del sistema.
+🔹 GET /api/admin/secret
+    Consulta todos los admins.
+
+
+=============================================================
+📘 AlmacenesController – /api/almacenes
+=============================================================
+Gestiona almacenes del sistema.
+🔹 GET /api/almacenes
+    Consulta todos los almacenes.
+    • Usa DTO: List<AlmacenDTO
+
+🔹 GET /api/almacenes/{id}
+    Consulta almacenes por el ID.
+    • Usa DTO: AlmacenDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Tipo : string
+        - Descripcion : string
+        - Activo : bool
+
+🔹 POST /api/almacenes
+    Crea un nuevo almacenes.
+    • Usa DTO: AlmacenDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Tipo : string
+        - Descripcion : string
+        - Activo : bool
+
+🔹 PUT /api/almacenes/{id}
+    Actualiza almacenes por el ID.
+    • Usa DTO: AlmacenDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Tipo : string
+        - Descripcion : string
+        - Activo : bool
+
+🔹 DELETE /api/almacenes/{id}
+    Elimina almacenes por el ID.
+
+🔹 PATCH /api/almacenes/{id}/toggle-activo
+    Actualiza parcialmente almacenes por el ID.
+
+
+=============================================================
+📘 ApiInfoController – /api/apiinfo
+=============================================================
+Gestiona apiinfos del sistema.
+🔹 GET /api/apiinfo/versions
+    Consulta todos los apiinfos.
+
+🔹 GET /api/apiinfo/current
+    Consulta todos los apiinfos.
+
+🔹 GET /api/apiinfo/deprecated-example
+    Consulta todos los apiinfos.
+
+🔹 GET /api/apiinfo/health
+    Consulta todos los apiinfos.
+
+
+=============================================================
+📘 AuditoriaController – /api/auditoria
+=============================================================
+Gestiona auditorias del sistema.
+🔹 GET /api/auditoria
+    Consulta todos los auditorias.
+
+🔹 GET /api/auditoria/{id}
+    Consulta auditoria por el ID.
+
+🔹 GET /api/auditoria/entidades
+    Consulta todos los auditorias.
+
+🔹 GET /api/auditoria/usuarios
+    Consulta todos los auditorias.
+
+
+=============================================================
+📘 AuthController – /api/auth
+=============================================================
+Gestiona auths del sistema.
+🔹 POST /api/auth/login
+    Crea un nuevo auth.
+    • Usa DTO: LoginRequestDTO
+      la compone:
+        - Nombre : string
+        - Password : string
+
+🔹 POST /api/auth/refresh
+    Crea un nuevo auth.
+    • Usa DTO: RefreshTokenRequestDTO
+      la compone:
+        - RefreshToken : string
+
+🔹 POST /api/auth/revoke
+    Crea un nuevo auth.
+    • Usa DTO: RefreshTokenRequestDTO
+      la compone:
+        - RefreshToken : string
+
+🔹 POST /api/auth/logout
+    Crea un nuevo auth.
+
+
+=============================================================
+📘 BajasMateriaPrimaController – /api/bajasmateriaprima
+=============================================================
+Gestiona bajasmateriaprimas del sistema.
+🔹 POST /api/bajasmateriaprima
+    Crea un nuevo bajasmateriaprima.
+    • Usa DTO: BajaMateriaPrimaDTO
+      la compone:
+        - Id : int
+        - Fecha : DateTime
+        - MateriaPrimaId : int
+        - MateriaPrimaNombre : string
+        - LoteInterno : string
+        - AlmacenId : int
+        - AlmacenNombre : string
+        - Cantidad : decimal
+        - Unidad : string
+        - Motivo : string
+        - UsuarioCreacion : string
+        - Aprobada : bool
+
+🔹 GET /api/bajasmateriaprima
+    Consulta todos los bajasmateriaprimas.
+    • Usa DTO: List<BajaMateriaPrimaDTO
+
+🔹 GET /api/bajasmateriaprima/{id}
+    Consulta bajasmateriaprima por el ID.
+    • Usa DTO: BajaMateriaPrimaDTO
+      la compone:
+        - Id : int
+        - Fecha : DateTime
+        - MateriaPrimaId : int
+        - MateriaPrimaNombre : string
+        - LoteInterno : string
+        - AlmacenId : int
+        - AlmacenNombre : string
+        - Cantidad : decimal
+        - Unidad : string
+        - Motivo : string
+        - UsuarioCreacion : string
+        - Aprobada : bool
+
+🔹 PUT /api/bajasmateriaprima/{id}/aprobar
+    Actualiza bajasmateriaprima por el ID.
+
+🔹 GET /api/bajasmateriaprima/estadisticas
+    Consulta todos los bajasmateriaprimas.
+
+
+=============================================================
+📘 BootstrapAuthController – /api/bootstrapauth
+=============================================================
+Gestiona bootstrapauths del sistema.
+🔹 POST /api/bootstrapauth/bootstrap-login
+    Crea un nuevo bootstrapauth.
+
+
+=============================================================
+📘 BootstrapController – /api/bootstrap
+=============================================================
+Gestiona bootstraps del sistema.
+🔹 GET /api/bootstrap/ui
+    Consulta todos los bootstraps.
+
+
+=============================================================
+📘 CacheController – /api/cache
+=============================================================
+Gestiona caches del sistema.
+
+=============================================================
+📘 CategoriasMateriaPrimaController – /api/categoriasmateriaprima
+=============================================================
+Gestiona categoriasmateriaprimas del sistema.
+🔹 GET /api/categoriasmateriaprima
+    Consulta todos los categoriasmateriaprimas.
+    • Usa DTO: List<CategoriaMateriaPrimaDTO
+
+🔹 GET /api/categoriasmateriaprima/{id}
+    Consulta categoriasmateriaprima por el ID.
+    • Usa DTO: CategoriaMateriaPrimaDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Activa : bool
+
+🔹 POST /api/categoriasmateriaprima
+    Crea un nuevo categoriasmateriaprima.
+    • Usa DTO: CategoriaMateriaPrimaCreateDTO
+      la compone:
+        - Nombre : string
+        - Activa : bool
+
+🔹 PUT /api/categoriasmateriaprima/{id}
+    Actualiza categoriasmateriaprima por el ID.
+    • Usa DTO: CategoriaMateriaPrimaCreateDTO
+      la compone:
+        - Nombre : string
+        - Activa : bool
+
+🔹 DELETE /api/categoriasmateriaprima/{id}
+    Elimina categoriasmateriaprima por el ID.
+
+🔹 PATCH /api/categoriasmateriaprima/{id}/toggle-estado
+    Actualiza parcialmente categoriasmateriaprima por el ID.
+
+
+=============================================================
+📘 CategoriasProductoTerminadoController – /api/categoriasproductoterminado
+=============================================================
+Gestiona categoriasproductoterminados del sistema.
+🔹 GET /api/categoriasproductoterminado
+    Consulta todos los categoriasproductoterminados.
+    • Usa DTO: List<CategoriaProductoTerminadoDTO
+
+🔹 GET /api/categoriasproductoterminado/{id}
+    Consulta categoriasproductoterminado por el ID.
+    • Usa DTO: CategoriaProductoTerminadoDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Activo : bool
+
+🔹 POST /api/categoriasproductoterminado
+    Crea un nuevo categoriasproductoterminado.
+    • Usa DTO: CategoriaProductoTerminadoCreateDTO
+      la compone:
+        - Nombre : string
+        - Activo : bool
+
+🔹 PUT /api/categoriasproductoterminado/{id}
+    Actualiza categoriasproductoterminado por el ID.
+    • Usa DTO: CategoriaProductoTerminadoCreateDTO
+      la compone:
+        - Nombre : string
+        - Activo : bool
+
+🔹 DELETE /api/categoriasproductoterminado/{id}
+    Elimina categoriasproductoterminado por el ID.
+
+
+=============================================================
+📘 ClientesController – /api/clientes
+=============================================================
+Gestiona clientes del sistema.
+🔹 GET /api/clientes
+    Consulta todos los clientes.
+    • Usa DTO: List<ClienteDTO
+
+🔹 GET /api/clientes/{id}
+    Consulta clientes por el ID.
+    • Usa DTO: ClienteDTO
+      la compone:
+        - Id : int
+        - RazonSocial : string
+        - CUIT : string
+        - Direccion : string
+        - Email : string
+        - Telefono : string
+        - Activo : bool
+
+🔹 POST /api/clientes
+    Crea un nuevo clientes.
+    • Usa DTO: ClienteCreateDTO
+      la compone:
+        - RazonSocial : string
+        - CUIT : string
+        - Direccion : string
+        - Email : string
+        - Telefono : string
+        - Activo : bool
+
+🔹 PUT /api/clientes/{id}
+    Actualiza clientes por el ID.
+    • Usa DTO: ClienteCreateDTO
+      la compone:
+        - RazonSocial : string
+        - CUIT : string
+        - Direccion : string
+        - Email : string
+        - Telefono : string
+        - Activo : bool
+
+🔹 DELETE /api/clientes/{id}
+    Elimina clientes por el ID.
+
+
+=============================================================
+📘 ConfiguracionesDocumentoController – /api/configuracionesdocumento
+=============================================================
+Gestiona configuracionesdocumentos del sistema.
+🔹 GET /api/configuracionesdocumento
+    Consulta todos los configuracionesdocumentos.
+    • Usa DTO: List<ConfiguracionDocumentoDTO
+
+🔹 GET /api/configuracionesdocumento/{tipoDocumento}
+    Consulta todos los configuracionesdocumentos.
+    • Usa DTO: ConfiguracionDocumentoDTO
+      la compone:
+        - Id : int
+        - TipoDocumento : string
+        - Formato : string
+        - AnchoMm : int
+        - AltoMm : int
+        - MargenSup : int
+        - MargenInf : int
+        - MargenIzq : int
+        - MargenDer : int
+        - Fuente : string
+        - TamanoFuente : int
+        - Orientacion : string
+        - Activo : bool
+
+🔹 POST /api/configuracionesdocumento
+    Crea un nuevo configuracionesdocumento.
+    • Usa DTO: ConfiguracionDocumentoCreateDTO
+      la compone:
+        - TipoDocumento : string
+        - Formato : string
+        - AnchoMm : int
+        - AltoMm : int
+        - MargenSup : int
+        - MargenInf : int
+        - MargenIzq : int
+        - MargenDer : int
+        - Fuente : string
+        - TamanoFuente : int
+        - Orientacion : string
+        - Activo : bool
+
+🔹 DELETE /api/configuracionesdocumento/{id}
+    Elimina configuracionesdocumento por el ID.
+
+
+=============================================================
+📘 ConfiguracionSistemaController – /api/configuracionsistema
+=============================================================
+Gestiona configuracionsistemas del sistema.
+🔹 GET /api/configuracionsistema
+    Consulta todos los configuracionsistemas.
+    • Usa DTO: List<ConfiguracionSistemaDTO
+
+🔹 GET /api/configuracionsistema/{clave}
+    Consulta todos los configuracionsistemas.
+    • Usa DTO: ConfiguracionSistemaDTO
+      la compone:
+        - Id : int
+        - Clave : string
+        - Valor : string
+
+🔹 PUT /api/configuracionsistema/{clave}
+    Actualiza configuracionsistemas.
+    • Usa DTO: ConfiguracionSistemaDTO
+      la compone:
+        - Id : int
+        - Clave : string
+        - Valor : string
+
+🔹 PUT /api/configuracionsistema
+    Actualiza configuracionsistemas.
+    • Usa DTO: List<ConfiguracionSistemaDTO>
+
+🔹 POST /api/configuracionsistema
+    Crea un nuevo configuracionsistema.
+    • Usa DTO: ConfiguracionSistemaDTO
+      la compone:
+        - Id : int
+        - Clave : string
+        - Valor : string
+
+
+=============================================================
+📘 DemoController – /api/demo
+=============================================================
+Gestiona demos del sistema.
+🔹 GET /api/demo/ping
+    Consulta todos los demos.
+
+🔹 POST /api/demo/ModoDemo
+    Crea un nuevo demo.
+
+
+=============================================================
+📘 DispositivosController – /api/dispositivos
+=============================================================
+Gestiona dispositivos del sistema.
+🔹 GET /api/dispositivos
+    Consulta todos los dispositivos.
+    • Usa DTO: DTOs.Dispositivos.DispositivoListQuery
+
+🔹 GET /api/dispositivos/{id}
+    Consulta dispositivos por el ID.
+
+🔹 POST /api/dispositivos
+    Crea un nuevo dispositivos.
+    • Usa DTO: DTOs.Dispositivos.DispositivoCreateDto
+
+🔹 PUT /api/dispositivos/{id}
+    Actualiza dispositivos por el ID.
+    • Usa DTO: DTOs.Dispositivos.DispositivoUpdateDto
+
+🔹 DELETE /api/dispositivos/{id}
+    Elimina dispositivos por el ID.
+
+🔹 PUT /api/dispositivos/{id}/toggle-estado
+    Actualiza dispositivos por el ID.
+
+
+=============================================================
+📘 DispositivosHealthController – /api/dispositivoshealth
+=============================================================
+Gestiona dispositivoshealths del sistema.
+🔹 GET /api/dispositivoshealth
+    Consulta todos los dispositivoshealths.
+
+
+=============================================================
+📘 DocumentacionController – /api/documentacion
+=============================================================
+Gestiona documentacions del sistema.
+🔹 GET /api/documentacion/endpoints
+    Consulta todos los documentacions.
+
+
+=============================================================
+📘 EmbalajesController – /api/embalajes
+=============================================================
+Gestiona embalajes del sistema.
+🔹 GET /api/embalajes
+    Consulta todos los embalajes.
+    • Usa DTO: List<EmbalajeDTO
+
+🔹 GET /api/embalajes/{id}
+    Consulta embalajes por el ID.
+    • Usa DTO: EmbalajeDTO
+      la compone:
+        - Id : int
+        - NombreCombo : string
+        - CodigoInterno : string
+        - CostoTotal : decimal
+        - Detalles : List<EmbalajeDetalleDTO>
+        - Producto : string
+        - Lote : string
+        - Unidad : string
+        - Cantidad : decimal
+        - CostoUnitario : decimal
+
+🔹 POST /api/embalajes
+    Crea un nuevo embalajes.
+    • Usa DTO: EmbalajeCreateDTO
+      la compone:
+        - NombreCombo : string
+        - CodigoInterno : string
+        - Detalles : List<EmbalajeDetalleCreateDTO>
+        - InventarioProductoTerminadoId : int
+        - Cantidad : decimal
+        - Unidad : string
+
+🔹 DELETE /api/embalajes/{id}
+    Elimina embalajes por el ID.
+
+
+=============================================================
+📘 EntradasMateriaPrimaController – /api/entradasmateriaprima
+=============================================================
+Gestiona entradasmateriaprimas del sistema.
+🔹 POST /api/entradasmateriaprima
+    Crea un nuevo entradasmateriaprima.
+    • Usa DTO: EntradaMateriaPrimaDTO
+      la compone:
+        - Id : int
+        - OrdenPedidoDetalleId : int
+        - MateriaPrimaNombre : string
+        - ProveedorNombre : string
+        - CantidadRecibida : decimal
+        - Unidad : string
+        - LoteInterno : string
+        - FechaRecepcion : DateTime
+        - Ubicacion : string
+        - Validada : bool
+        - Observaciones : string
+        - AlmacenNombre : string
+        - Distribucion : List<EntradaMPDistribucionItemDTO>
+
+🔹 GET /api/entradasmateriaprima
+    Consulta todos los entradasmateriaprimas.
+    • Usa DTO: List<EntradaMateriaPrimaDTO
+
+🔹 GET /api/entradasmateriaprima/{id}
+    Consulta entradasmateriaprima por el ID.
+    • Usa DTO: EntradaMateriaPrimaDTO
+      la compone:
+        - Id : int
+        - OrdenPedidoDetalleId : int
+        - MateriaPrimaNombre : string
+        - ProveedorNombre : string
+        - CantidadRecibida : decimal
+        - Unidad : string
+        - LoteInterno : string
+        - FechaRecepcion : DateTime
+        - Ubicacion : string
+        - Validada : bool
+        - Observaciones : string
+        - AlmacenNombre : string
+        - Distribucion : List<EntradaMPDistribucionItemDTO>
+
+🔹 GET /api/entradasmateriaprima/pendientes-validacion
+    Consulta todos los entradasmateriaprimas.
+    • Usa DTO: List<EntradaMateriaPrimaDTO
+
+🔹 PUT /api/entradasmateriaprima/{id}/validar
+    Actualiza entradasmateriaprima por el ID.
+
+
+=============================================================
+📘 ExportController – /api/export
+=============================================================
+Gestiona exports del sistema.
+🔹 POST /api/export/universal/{format}
+    Crea un nuevo export.
+
+
+=============================================================
+📘 FeatureFlagsController – /api/featureflags
+=============================================================
+Gestiona featureflags del sistema.
+🔹 GET /api/featureflags
+    Consulta todos los featureflags.
+
+🔹 POST /api/featureflags/auth/enable
+    Crea un nuevo featureflags.
+
+🔹 POST /api/featureflags/auth/disable
+    Crea un nuevo featureflags.
+
+🔹 POST /api/featureflags/swagger/require-auth
+    Crea un nuevo featureflags.
+
+🔹 POST /api/featureflags/installer/enable
+    Crea un nuevo featureflags.
+
+🔹 POST /api/featureflags/installer/disable
+    Crea un nuevo featureflags.
+
+
+=============================================================
+📘 FormulacionesController – /api/formulaciones
+=============================================================
+Gestiona formulaciones del sistema.
+🔹 GET /api/formulaciones
+    Consulta todos los formulaciones.
+
+🔹 GET /api/formulaciones/{id}
+    Consulta formulaciones por el ID.
+
+🔹 POST /api/formulaciones
+    Crea un nuevo formulaciones.
+    • Usa DTO: FormulacionCreateDTO
+      la compone:
+        - Nombre : string
+        - Codigo : string
+        - EsSoloAditivos : bool
+        - Detalles : List<FormulacionDetalleCreateDTO>
+
+🔹 DELETE /api/formulaciones/{id}
+    Elimina formulaciones por el ID.
+
+🔹 GET /api/formulaciones/{id}/costo
+    Consulta formulaciones por el ID.
+
+
+=============================================================
+📘 GatewayController – /api/gateway
+=============================================================
+Gestiona gateways del sistema.
+
+=============================================================
+📘 GenericExportController – /api/genericexport
+=============================================================
+Gestiona genericexports del sistema.
+🔹 GET /api/genericexport/{module}/{format}
+    Consulta todos los genericexports.
+
+🔹 GET /api/genericexport/test/pdf
+    Consulta todos los genericexports.
+
+
+=============================================================
+📘 HealthController – /api/health
+=============================================================
+Gestiona healths del sistema.
+🔹 GET /api/health/ping
+    Consulta todos los healths.
+
+🔹 GET /api/health/db-status
+    Consulta todos los healths.
+
+🔹 POST /api/health/ensure-db
+    Crea un nuevo health.
+
+🔹 POST /api/health/insert-demo
+    Crea un nuevo health.
+
+
+=============================================================
+📘 InventarioMateriaPrimaController – /api/inventariomateriaprima
+=============================================================
+Gestiona inventariomateriaprimas del sistema.
+🔹 GET /api/inventariomateriaprima
+    Consulta todos los inventariomateriaprimas.
+    • Usa DTO: List<InventarioMateriaPrimaDTO
+
+🔹 GET /api/inventariomateriaprima/stock-por-bodega
+    Consulta todos los inventariomateriaprimas.
+    • Usa DTO: List<InventarioMateriaPrimaDTO
+
+🔹 GET /api/inventariomateriaprima/lote/{lote}
+    Consulta todos los inventariomateriaprimas.
+    • Usa DTO: List<InventarioMateriaPrimaDTO
+
+🔹 GET /api/inventariomateriaprima/stock
+    Consulta todos los inventariomateriaprimas.
+
+🔹 GET /api/inventariomateriaprima/movimientos
+    Consulta todos los inventariomateriaprimas.
+    • Usa DTO: List<MovimientoInventarioMPDTO
+
+
+=============================================================
+📘 InventarioPTController – /api/inventariopt
+=============================================================
+Gestiona inventariopts del sistema.
+🔹 GET /api/inventariopt
+    Consulta todos los inventariopts.
+    • Usa DTO: List<InventarioPTDTO
+
+🔹 GET /api/inventariopt/{id}
+    Consulta inventariopt por el ID.
+    • Usa DTO: InventarioPTDTO
+      la compone:
+        - Id : int
+        - NombreProducto : string
+        - Presentacion : string
+        - LoteInterno : string
+        - Almacen : string
+        - FechaProduccion : DateTime
+        - FechaVencimiento : DateTime
+        - CantidadDisponible : decimal
+        - CostoUnitario : decimal
+
+
+=============================================================
+📘 IoTDeviceFacadeController – /api/iotdevicefacade
+=============================================================
+Gestiona iotdevicefacades del sistema.
+
+=============================================================
+📘 IoTDevicesController – /api/iotdevices
+=============================================================
+Gestiona iotdevices del sistema.
+
+=============================================================
+📘 IoTLogisticaController – /api/iotlogistica
+=============================================================
+Gestiona iotlogisticas del sistema.
+🔹 POST /api/iotlogistica/registro
+    Crea un nuevo iotlogistica.
+
+🔹 GET /api/iotlogistica/bitacora/{codigoBarra}
+    Consulta todos los iotlogisticas.
+
+
+=============================================================
+📘 LoginController – /api/login
+=============================================================
+Gestiona logins del sistema.
+
+=============================================================
+📘 MantenimientoEquiposController – /api/mantenimientoequipos
+=============================================================
+Gestiona mantenimientoequipos del sistema.
+🔹 PUT /api/mantenimientoequipos/ordenes-trabajo/{id}/estado
+    Actualiza mantenimientoequipos por el ID.
+    • Usa DTO: DTOs.Mantenimiento.OTChangeStatusDto
+
+🔹 POST /api/mantenimientoequipos/ordenes-trabajo/{id}/lecturas
+    Acción especial sobre el mantenimientoequipos por el ID.
+    • Usa DTO: DTOs.Mantenimiento.LecturasCreateDto
+
+🔹 GET /api/mantenimientoequipos/repuestos
+    Consulta todos los mantenimientoequipos.
+    • Usa DTO: DTOs.Mantenimiento.MaintPaginationQuery
+
+🔹 POST /api/mantenimientoequipos/equipos/{id}/asignar-codigo-barra
+    Acción especial sobre el mantenimientoequipos por el ID.
+
+🔹 POST /api/mantenimientoequipos/equipos
+    Crea un nuevo mantenimientoequipos.
+    • Usa DTO: DTOs.Mantenimiento.EquipoCreateDto
+
+🔹 PUT /api/mantenimientoequipos/equipos/{id}
+    Actualiza mantenimientoequipos por el ID.
+    • Usa DTO: DTOs.Mantenimiento.EquipoUpdateDto
+
+🔹 GET /api/mantenimientoequipos/equipos/{id}
+    Consulta mantenimientoequipos por el ID.
+
+🔹 GET /api/mantenimientoequipos/equipos/{id}/mantenimientos
+    Consulta mantenimientoequipos por el ID.
+    • Usa DTO: DTOs.Mantenimiento.OTQueryDto
+
+
+=============================================================
+📘 MateriaPrimaPaginatedController – /api/materiaprimapaginated
+=============================================================
+Gestiona materiaprimapaginateds del sistema.
+
+=============================================================
+📘 MateriasPrimasController – /api/materiasprimas
+=============================================================
+Gestiona materiasprimas del sistema.
+🔹 POST /api/materiasprimas/{id}/dividir
+    Acción especial sobre el materiasprimas por el ID.
+    • Usa DTO: List<TracerSoftware.API.DTOs.MateriaPrimaDerivadaCreateDTO>
+
+🔹 GET /api/materiasprimas
+    Consulta todos los materiasprimas.
+    • Usa DTO: List<MateriaPrimaDTO
+
+🔹 GET /api/materiasprimas/{id}
+    Consulta materiasprimas por el ID.
+    • Usa DTO: MateriaPrimaDTO
+      la compone:
+        - Id : int
+        - Fecha : DateTime
+        - MateriaPrimaId : int
+        - MateriaPrimaNombre : string
+        - LoteInterno : string
+        - AlmacenId : int
+        - AlmacenNombre : string
+        - Cantidad : decimal
+        - Unidad : string
+        - Motivo : string
+        - UsuarioCreacion : string
+        - Aprobada : bool
+
+🔹 POST /api/materiasprimas
+    Crea un nuevo materiasprimas.
+    • Usa DTO: MateriaPrimaCreateDTO
+      la compone:
+        - MateriaPrimaId : int
+        - LoteInterno : string
+        - AlmacenId : int
+        - Cantidad : decimal
+        - Unidad : string
+        - Motivo : string
+
+🔹 PUT /api/materiasprimas/{id}
+    Actualiza materiasprimas por el ID.
+    • Usa DTO: MateriaPrimaCreateDTO
+      la compone:
+        - MateriaPrimaId : int
+        - LoteInterno : string
+        - AlmacenId : int
+        - Cantidad : decimal
+        - Unidad : string
+        - Motivo : string
+
+🔹 DELETE /api/materiasprimas/{id}
+    Elimina materiasprimas por el ID.
+
+🔹 PATCH /api/materiasprimas/{id}/toggle-estado
+    Actualiza parcialmente materiasprimas por el ID.
+
+
+=============================================================
+📘 OrdenesProduccionController – /api/ordenesproduccion
+=============================================================
+Gestiona ordenesproduccions del sistema.
+🔹 GET /api/ordenesproduccion
+    Consulta todos los ordenesproduccions.
+    • Usa DTO: List<OrdenProduccionDTO
+
+🔹 GET /api/ordenesproduccion/{id}
+    Consulta ordenesproduccion por el ID.
+    • Usa DTO: OrdenProduccionDTO
+      la compone:
+        - Id : int
+        - Codigo : string
+        - ProcesoProduccionId : int
+        - ProcesoNombre : string
+        - Estado : string
+        - CantidadPlanificada : decimal
+        - UnidadMedida : string
+        - Notas : string
+        - FechaCreacion : DateTime
+        - CreadoPor : string
+        - Items : List<OrdenProduccionItemDTO>
+        - Consumos : List<OrdenProduccionConsumoDTO>
+        - EjecucionesProcedimientos : List<ProcedimientoEjecucionDTO>
+        - Id : int
+        - ProductoTerminadoId : int
+        - ProductoNombre : string
+        - CantidadPlanificada : decimal
+        - CantidadProducida : decimal
+        - Variacion : decimal
+        - UnidadMedida : string
+        - Id : int
+        - ProductoId : int
+        - ProductoNombre : string
+        - EsAditivo : bool
+        - Lote : string
+        - Cantidad : decimal
+        - UnidadMedida : string
+        - FechaConsumo : DateTime
+        - CreadoPor : string
+        - Id : int
+        - ProcedimientoProduccionId : int
+        - ProcedimientoNombre : string
+        - EstadoPaso : string
+        - Observaciones : string
+        - OperadorResponsable : string
+        - Mediciones : List<ProcedimientoMedicionDTO>
+        - Id : int
+        - ProcedimientoParametroId : int
+        - ParametroNombre : string
+        - ParametroUnidad : string
+        - EnRango : bool
+        - FechaMedicion : DateTime
+        - MedidoPor : string
+        - Observaciones : string
+
+🔹 POST /api/ordenesproduccion
+    Crea un nuevo ordenesproduccion.
+    • Usa DTO: OrdenProduccionCreateDTO
+      la compone:
+        - ProcesoProduccionId : int
+        - CantidadPlanificada : decimal
+        - UnidadMedidaId : int
+        - Notas : string
+        - ItemsEsperados : List<OrdenProduccionItemPlanDTO>
+        - ProductoTerminadoId : int
+        - CantidadPlanificada : decimal
+        - UnidadMedidaId : int
+
+🔹 POST /api/ordenesproduccion/{id}/iniciar
+    Acción especial sobre el ordenesproduccion por el ID.
+
+🔹 POST /api/ordenesproduccion/{id}/pausar
+    Acción especial sobre el ordenesproduccion por el ID.
+
+🔹 POST /api/ordenesproduccion/{id}/reanudar
+    Acción especial sobre el ordenesproduccion por el ID.
+
+🔹 POST /api/ordenesproduccion/{id}/finalizar
+    Acción especial sobre el ordenesproduccion por el ID.
+
+🔹 POST /api/ordenesproduccion/{id}/consumos
+    Acción especial sobre el ordenesproduccion por el ID.
+    • Usa DTO: List<OrdenProduccionConsumoCreateDTO>
+
+🔹 POST /api/ordenesproduccion/{id}/consumos/desde-formulacion
+    Acción especial sobre el ordenesproduccion por el ID.
+    • Usa DTO: ConsumoFormulacionRequestDTO?
+
+🔹 POST /api/ordenesproduccion/{id}/outputs
+    Acción especial sobre el ordenesproduccion por el ID.
+    • Usa DTO: List<OrdenProduccionOutputCreateDTO>
+
+🔹 POST /api/ordenesproduccion/{id}/procedimientos/{procedimientoEjecucionId}/iniciar
+    Acción especial sobre el ordenesproduccion por el ID.
+
+🔹 POST /api/ordenesproduccion/{id}/procedimientos/{procedimientoEjecucionId}/finalizar
+    Acción especial sobre el ordenesproduccion por el ID.
+
+🔹 POST /api/ordenesproduccion/{id}/procedimientos/{procedimientoEjecucionId}/mediciones
+    Acción especial sobre el ordenesproduccion por el ID.
+    • Usa DTO: List<ProcedimientoMedicionCreateDTO>
+
+🔹 POST /api/ordenesproduccion/con-items
+    Crea un nuevo ordenesproduccion.
+    • Usa DTO: OrdenProduccionCreateDTO
+      la compone:
+        - ProcesoProduccionId : int
+        - CantidadPlanificada : decimal
+        - UnidadMedidaId : int
+        - Notas : string
+        - ItemsEsperados : List<OrdenProduccionItemPlanDTO>
+        - ProductoTerminadoId : int
+        - CantidadPlanificada : decimal
+        - UnidadMedidaId : int
+
+🔹 POST /api/ordenesproduccion/{id}/outputs-reales
+    Acción especial sobre el ordenesproduccion por el ID.
+    • Usa DTO: List<OutputRealDTO>
+
+🔹 POST /api/ordenesproduccion/{id}/mermas
+    Acción especial sobre el ordenesproduccion por el ID.
+    • Usa DTO: RegistrarMermasProduccionDTO
+
+🔹 POST /api/ordenesproduccion/{id}/finalizar-con-variaciones
+    Acción especial sobre el ordenesproduccion por el ID.
+    • Usa DTO: FinalizarOrdenProduccionResponseDTO
+
+
+=============================================================
+📘 OrdenPedidoMateriaPrimaController – /api/ordenpedidomateriaprima
+=============================================================
+Gestiona ordenpedidomateriaprimas del sistema.
+🔹 POST /api/ordenpedidomateriaprima
+    Crea un nuevo ordenpedidomateriaprima.
+    • Usa DTO: OrdenPedidoMateriaPrimaDTO
+      la compone:
+        - Id : int
+        - ProveedorId : int
+        - ProveedorNombre : string
+        - Fecha : DateTime
+        - Confirmada : bool
+        - Detalles : List<OrdenPedidoDetalleDTO>
+
+🔹 GET /api/ordenpedidomateriaprima
+    Consulta todos los ordenpedidomateriaprimas.
+    • Usa DTO: List<OrdenPedidoMateriaPrimaDTO
+
+🔹 GET /api/ordenpedidomateriaprima/{id}
+    Consulta ordenpedidomateriaprima por el ID.
+    • Usa DTO: OrdenPedidoMateriaPrimaDTO
+      la compone:
+        - Id : int
+        - ProveedorId : int
+        - ProveedorNombre : string
+        - Fecha : DateTime
+        - Confirmada : bool
+        - Detalles : List<OrdenPedidoDetalleDTO>
+
+🔹 PUT /api/ordenpedidomateriaprima/{id}/confirmar
+    Actualiza ordenpedidomateriaprima por el ID.
+
+
+=============================================================
+📘 OrdenSalidaController – /api/ordensalida
+=============================================================
+Gestiona ordensalidas del sistema.
+🔹 GET /api/ordensalida
+    Consulta todos los ordensalidas.
+    • Usa DTO: List<OrdenSalidaDTO
+
+🔹 GET /api/ordensalida/{id}
+    Consulta ordensalida por el ID.
+    • Usa DTO: OrdenSalidaDTO
+      la compone:
+        - Id : int
+        - Cliente : string
+        - Fecha : DateTime
+        - Confirmada : bool
+        - Detalles : List<OrdenSalidaDetalleDTO>
+
+🔹 POST /api/ordensalida
+    Crea un nuevo ordensalida.
+    • Usa DTO: OrdenSalidaCreateDTO
+      la compone:
+        - ClienteId : int
+        - Detalles : List<OrdenSalidaDetalleCreateDTO>
+
+🔹 PUT /api/ordensalida/{id}/confirmar
+    Actualiza ordensalida por el ID.
+
+🔹 GET /api/ordensalida/{id}/remito
+    Consulta ordensalida por el ID.
+
+🔹 GET /api/ordensalida/{id}/pdf
+    Consulta ordensalida por el ID.
+
+
+=============================================================
+📘 PaginationExampleController – /api/paginationexample
+=============================================================
+Gestiona paginationexamples del sistema.
+🔹 GET /api/paginationexample/almacenes
+    Consulta todos los paginationexamples.
+
+🔹 GET /api/paginationexample/categorias
+    Consulta todos los paginationexamples.
+
+🔹 GET /api/paginationexample/almacenes-simple
+    Consulta todos los paginationexamples.
+
+
+=============================================================
+📘 PaginationTestController – /api/paginationtest
+=============================================================
+Gestiona paginationtests del sistema.
+🔹 GET /api/paginationtest/universal
+    Consulta todos los paginationtests.
+
+
+=============================================================
+📘 ProcesosController – /api/procesos
+=============================================================
+Gestiona procesos del sistema.
+🔹 GET /api/procesos
+    Consulta todos los procesos.
+    • Usa DTO: List<ProcesoProduccionDTO
+
+🔹 GET /api/procesos/{id}
+    Consulta procesos por el ID.
+    • Usa DTO: ProcesoProduccionDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Descripcion : string
+        - Activo : bool
+        - FechaCreacion : DateTime
+        - Procedimientos : List<ProcedimientoProduccionDTO>
+
+🔹 POST /api/procesos
+    Crea un nuevo procesos.
+    • Usa DTO: ProcesoProduccionCreateDTO
+      la compone:
+        - Nombre : string
+        - Descripcion : string
+        - Activo : bool
+        - Procedimientos : List<ProcedimientoProduccionCreateDTO>
+
+🔹 PUT /api/procesos/{id}
+    Actualiza procesos por el ID.
+    • Usa DTO: ProcesoProduccionCreateDTO
+      la compone:
+        - Nombre : string
+        - Descripcion : string
+        - Activo : bool
+        - Procedimientos : List<ProcedimientoProduccionCreateDTO>
+
+🔹 DELETE /api/procesos/{id}
+    Elimina procesos por el ID.
+
+🔹 GET /api/procesos/{id}/procedimientos
+    Consulta procesos por el ID.
+    • Usa DTO: List<ProcedimientoProduccionDTO
+
+🔹 POST /api/procesos/{id}/procedimientos
+    Acción especial sobre el procesos por el ID.
+    • Usa DTO: ProcedimientoProduccionCreateDTO
+      la compone:
+        - Nombre : string
+        - Descripcion : string
+        - Orden : int
+        - UsaFormulacion : bool
+        - Parametros : List<ProcedimientoParametroCreateDTO>
+        - Nombre : string
+        - Unidad : string
+        - TipoDato : int
+        - Obligatorio : bool
+        - Activo : bool
+
+🔹 GET /api/procesos/procedimientos/{procedimientoId}/parametros
+    Consulta todos los procesos.
+    • Usa DTO: List<ProcedimientoParametroDTO
+
+🔹 POST /api/procesos/procedimientos/{procedimientoId}/parametros
+    Crea un nuevo procesos.
+    • Usa DTO: ProcedimientoParametroCreateDTO
+
+
+=============================================================
+📘 ProductosTerminadosController – /api/productosterminados
+=============================================================
+Gestiona productosterminados del sistema.
+🔹 GET /api/productosterminados
+    Consulta todos los productosterminados.
+    • Usa DTO: List<ProductoTerminadoDTO
+
+🔹 GET /api/productosterminados/{id}
+    Consulta productosterminados por el ID.
+    • Usa DTO: ProductoTerminadoDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Activo : bool
+
+🔹 POST /api/productosterminados
+    Crea un nuevo productosterminados.
+    • Usa DTO: ProductoTerminadoCreateDTO
+      la compone:
+        - Nombre : string
+        - Activo : bool
+
+🔹 PUT /api/productosterminados/{id}
+    Actualiza productosterminados por el ID.
+    • Usa DTO: ProductoTerminadoCreateDTO
+      la compone:
+        - Nombre : string
+        - Activo : bool
+
+🔹 DELETE /api/productosterminados/{id}
+    Elimina productosterminados por el ID.
+
+🔹 POST /api/productosterminados/presentaciones
+    Crea un nuevo productosterminados.
+    • Usa DTO: PresentacionPTCreateDTO
+      la compone:
+        - ProductoTerminadoId : int
+        - NombrePresentacion : string
+        - PesoNeto : decimal
+        - Unidad : string
+        - GTIN : string
+
+🔹 DELETE /api/productosterminados/presentaciones/{id}
+    Elimina productosterminados por el ID.
+
+
+=============================================================
+📘 ProveedoresController – /api/proveedores
+=============================================================
+Gestiona proveedores del sistema.
+🔹 GET /api/proveedores
+    Consulta todos los proveedores.
+    • Usa DTO: List<ProveedorDTO
+
+🔹 GET /api/proveedores/{id}
+    Consulta proveedores por el ID.
+    • Usa DTO: ProveedorDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - CUIT : string
+        - Direccion : string
+        - Telefono : string
+        - Email : string
+        - Activo : bool
+        - MateriasPrimas : List<MateriaPrimaDTO>
+
+🔹 POST /api/proveedores
+    Crea un nuevo proveedores.
+    • Usa DTO: ProveedorCreateDTO
+      la compone:
+        - Nombre : string
+        - CUIT : string
+        - Direccion : string
+        - Telefono : string
+        - Email : string
+        - MateriaPrimaIds : List<int>
+
+🔹 PUT /api/proveedores/{id}
+    Actualiza proveedores por el ID.
+    • Usa DTO: ProveedorCreateDTO
+      la compone:
+        - Nombre : string
+        - CUIT : string
+        - Direccion : string
+        - Telefono : string
+        - Email : string
+        - MateriaPrimaIds : List<int>
+
+🔹 DELETE /api/proveedores/{id}
+    Elimina proveedores por el ID.
+
+🔹 PATCH /api/proveedores/{id}/toggle-estado
+    Actualiza parcialmente proveedores por el ID.
+
+
+=============================================================
+📘 RolesController – /api/roles
+=============================================================
+Gestiona roles del sistema.
+🔹 GET /api/roles
+    Consulta todos los roles.
+    • Usa DTO: IEnumerable<RolDTO
+
+🔹 GET /api/roles/{id}
+    Consulta roles por el ID.
+    • Usa DTO: RolDTO
+      la compone:
+        - Id : int
+        - Nombre : string
+        - Unidad : string
+        - Descripcion : string
+        - Activo : bool
+
+🔹 POST /api/roles
+    Crea un nuevo roles.
+    • Usa DTO: DTOs.RolDTO
+
+🔹 PUT /api/roles/{id}
+    Actualiza roles por el ID.
+    • Usa DTO: DTOs.RolDTO
+
+🔹 DELETE /api/roles/{id}
+    Elimina roles por el ID.
+
+
+=============================================================
+📘 SetupController – /api/setup
+=============================================================
+Gestiona setups del sistema.
+🔹 GET /api/setup/status
+    Consulta todos los setups.
+
+🔹 POST /api/setup/create_bd
+    Crea un nuevo setup.
+
+🔹 POST /api/setup/install
+    Crea un nuevo setup.
+
+
+=============================================================
+📘 TestAdvancedLoggingController – /api/testadvancedlogging
+=============================================================
+Gestiona testadvancedloggings del sistema.
+🔹 GET /api/testadvancedlogging/status
+    Consulta todos los testadvancedloggings.
+
+🔹 POST /api/testadvancedlogging/performance/test
+    Crea un nuevo testadvancedlogging.
+
+🔹 POST /api/testadvancedlogging/security/test
+    Crea un nuevo testadvancedlogging.
+
+🔹 POST /api/testadvancedlogging/audit/test
+    Crea un nuevo testadvancedlogging.
+
+🔹 POST /api/testadvancedlogging/levels/test
+    Crea un nuevo testadvancedlogging.
+
+🔹 POST /api/testadvancedlogging/structured/test
+    Crea un nuevo testadvancedlogging.
+
+
+=============================================================
+📘 TestDocumentationController – /api/testdocumentation
+=============================================================
+Gestiona testdocumentations del sistema.
+🔹 GET /api/testdocumentation/openapi/json
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/openapi/yaml
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/postman
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/markdown
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/sdk/typescript
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/sdk/csharp
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/version-test
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/version-test
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/info
+    Consulta todos los testdocumentations.
+
+🔹 GET /api/testdocumentation/performance-test
+    Consulta todos los testdocumentations.
+
+
+=============================================================
+📘 TestErrorHandlingController – /api/testerrorhandling
+=============================================================
+Gestiona testerrorhandlings del sistema.
+🔹 GET /api/testerrorhandling/exception
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/business-logic
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/validation
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/not-found
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/external-service
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/timeout
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/unauthorized
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/argument
+    Consulta todos los testerrorhandlings.
+
+🔹 POST /api/testerrorhandling/model-validation
+    Crea un nuevo testerrorhandling.
+
+🔹 GET /api/testerrorhandling/success
+    Consulta todos los testerrorhandlings.
+
+🔹 GET /api/testerrorhandling/delayed
+    Consulta todos los testerrorhandlings.
+
+
+=============================================================
+📘 TestPerformanceController – /api/testperformance
+=============================================================
+Gestiona testperformances del sistema.
+🔹 GET /api/testperformance/cache/distributed/test
+    Consulta todos los testperformances.
+
+🔹 GET /api/testperformance/cache/memory/test
+    Consulta todos los testperformances.
+
+🔹 POST /api/testperformance/cache/distributed/multiple
+    Crea un nuevo testperformance.
+
+🔹 GET /api/testperformance/cache/memory/get-or-create/{id}
+    Consulta testperformance por el ID.
+
+🔹 POST /api/testperformance/performance/stress-test
+    Crea un nuevo testperformance.
+
+🔹 GET /api/testperformance/metrics/performance
+    Consulta todos los testperformances.
+
+🔹 GET /api/testperformance/metrics/cache
+    Consulta todos los testperformances.
+
+🔹 DELETE /api/testperformance/cache/clear
+    Elimina testperformances.
+
+🔹 POST /api/testperformance/metrics/reset
+    Crea un nuevo testperformance.
+
+🔹 GET /api/testperformance/simulate/slow-operation/{delayMs}
+    Consulta todos los testperformances.
+
+🔹 GET /api/testperformance/cache/response-test
+    Consulta todos los testperformances.
+
+
+=============================================================
+📘 TestRateLimitController – /api/testratelimit
+=============================================================
+Gestiona testratelimits del sistema.
+🔹 GET /api/testratelimit/basic
+    Consulta todos los testratelimits.
+
+🔹 GET /api/testratelimit/strict
+    Consulta todos los testratelimits.
+
+🔹 GET /api/testratelimit/unlimited
+    Consulta todos los testratelimits.
+
+🔹 POST /api/testratelimit/expensive
+    Crea un nuevo testratelimit.
+
+
+=============================================================
+📘 TestValidationController – /api/testvalidation
+=============================================================
+Gestiona testvalidations del sistema.
+🔹 POST /api/testvalidation/usuario/valid
+    Crea un nuevo testvalidation.
+    • Usa DTO: UsuarioCreateDTO
+      la compone:
+        - RolId : int
+
+🔹 POST /api/testvalidation/usuario/invalid
+    Crea un nuevo testvalidation.
+    • Usa DTO: UsuarioCreateDTO
+      la compone:
+        - RolId : int
+
+🔹 POST /api/testvalidation/cliente/test
+    Crea un nuevo testvalidation.
+    • Usa DTO: ClienteCreateDTO
+      la compone:
+        - RazonSocial : string
+        - CUIT : string
+        - Direccion : string
+        - Email : string
+        - Telefono : string
+        - Activo : bool
+
+🔹 POST /api/testvalidation/producto/test
+    Crea un nuevo testvalidation.
+    • Usa DTO: ProductoTerminadoCreateDTO
+      la compone:
+        - Nombre : string
+        - Activo : bool
+
+🔹 POST /api/testvalidation/login/test
+    Crea un nuevo testvalidation.
+    • Usa DTO: LoginRequestDTO
+      la compone:
+        - Nombre : string
+        - Password : string
+
+🔹 POST /api/testvalidation/complex
+    Crea un nuevo testvalidation.
+    • Usa DTO: ComplexValidationTestDTO
+
+🔹 GET /api/testvalidation/status
+    Consulta todos los testvalidations.
+
+
+=============================================================
+📘 TrazabilidadController – /api/trazabilidad
+=============================================================
+Gestiona trazabilidads del sistema.
+🔹 GET /api/trazabilidad/hacia-atras/{codigoBarra}
+    Consulta todos los trazabilidads.
+
+🔹 GET /api/trazabilidad/hacia-adelante/{codigoBarra}
+    Consulta todos los trazabilidads.
+
+
+=============================================================
+📘 UnidadesMedidaController – /api/unidadesmedida
+=============================================================
+Gestiona unidadesmedidas del sistema.
+🔹 GET /api/unidadesmedida
+    Consulta todos los unidadesmedidas.
+    • Usa DTO: List<UnidadMedidaDTO
+
+🔹 GET /api/unidadesmedida/tipo/{tipo}
+    Consulta todos los unidadesmedidas.
+    • Usa DTO: List<UnidadMedidaDTO
+
+🔹 GET /api/unidadesmedida/debug
+    Consulta todos los unidadesmedidas.
+
+
+=============================================================
+📘 UsuariosController – /api/usuarios
+=============================================================
+Gestiona usuarios del sistema.
+🔹 GET /api/usuarios
+    Consulta todos los usuarios.
+    • Usa DTO: IEnumerable<UsuarioDTO
+
+🔹 GET /api/usuarios/{id}
+    Consulta usuarios por el ID.
+    • Usa DTO: UsuarioDTO
+      la compone:
+        - UsuarioId : int
+        - Activo : bool
+        - RolId : int
+
+🔹 POST /api/usuarios
+    Crea un nuevo usuarios.
+    • Usa DTO: UsuarioCreateDTO
+      la compone:
+        - RolId : int
+
+🔹 PUT /api/usuarios/{id}
+    Actualiza usuarios por el ID.
+    • Usa DTO: UsuarioCreateDTO
+      la compone:
+        - RolId : int
+
+🔹 DELETE /api/usuarios/{id}
+    Elimina usuarios por el ID.
+
+🔹 POST /api/usuarios/{id}/cambiar-password
+    Cambia la contraseña del usuarios por el ID.
+    • Usa DTO: CambiarPasswordDTO
+      la compone:
+        - PasswordActual : string
+        - PasswordNueva : string
+        - ConfirmarPasswordNueva : string
+
+
+=============================================================
+📘 LoginController – /api/login
+=============================================================
+Gestiona logins del sistema.
+
+=============================================================
+📘 GS1SequencesController – /api/gs1sequences
+=============================================================
+Gestiona gs1sequences del sistema.
+🔹 POST /api/gs1sequences/generate
+    Crea un nuevo gs1sequences.
+
+🔹 POST /api/gs1sequences/validate/gtin
+    Crea un nuevo gs1sequences.
+
+🔹 GET /api/gs1sequences/exists
+    Consulta todos los gs1sequences.
+
+🔹 POST /api/gs1sequences/reserve
+    Crea un nuevo gs1sequences.
+
+🔹 POST /api/gs1sequences/confirm
+    Crea un nuevo gs1sequences.
+
+🔹 POST /api/gs1sequences/release
+    Crea un nuevo gs1sequences.
+
+🔹 GET /api/gs1sequences/stats
+    Consulta todos los gs1sequences.
+    • Usa DTO: GS1StatsDTO
+
+🔹 POST /api/gs1sequences/cleanup
+    Crea un nuevo gs1sequences.
+
+🔹 POST /api/gs1sequences/batch/gtin13
+    Crea un nuevo gs1sequences.
+
+
+=============================================================
+📘 JobsController – /api/jobs
+=============================================================
+Gestiona jobs del sistema.
+
+=============================================================
+📘 OperationalTemplatesController – /api/operationaltemplates
+=============================================================
+Gestiona operationaltemplates del sistema.
+🔹 POST /api/operationaltemplates/load
+    Crea un nuevo operationaltemplates.
+
+🔹 POST /api/operationaltemplates/regenerate
+    Crea un nuevo operationaltemplates.
+
+🔹 GET /api/operationaltemplates/categories
+    Consulta todos los operationaltemplates.
+
+🔹 GET /api/operationaltemplates/by-category/{category}
+    Consulta todos los operationaltemplates.
+    • Usa DTO: IEnumerable<LabelTemplateDTO
+
+🔹 GET /api/operationaltemplates/categories/detailed
+    Consulta todos los operationaltemplates.
+
+🔹 POST /api/operationaltemplates/load/{templateFileName}
+    Crea un nuevo operationaltemplates.
+    • Usa DTO: LabelTemplateDTO
+      la compone:
+        - Id : int
+        - Name : string
+        - TemplateType : string
+        - Category : string
+        - WidthMm : decimal
+        - HeightMm : decimal
+        - WidthDots : int
+        - HeightDots : int
+        - BaseDpi : int
+        - MarginTop : int
+        - MarginBottom : int
+        - MarginLeft : int
+        - MarginRight : int
+        - IsActive : bool
+        - IsSystemTemplate : bool
+        - Version : int
+        - CreatedAt : DateTime
+        - UpdatedAt : DateTime
+        - Name : string
+        - TemplateType : string
+        - Category : string
+        - WidthMm : decimal
+        - HeightMm : decimal
+        - WidthDots : int
+        - HeightDots : int
+        - BaseDpi : int
+        - MarginTop : int
+        - MarginBottom : int
+        - MarginLeft : int
+        - MarginRight : int
+        - IsActive : bool
+        - IsDefault : bool
+        - AvailableFields : List<string>
+        - RequiredFields : List<string>
+        - UsageCount : int
+
+🔹 GET /api/operationaltemplates/stats
+    Consulta todos los operationaltemplates.
+
+
+=============================================================
+📘 PreviewController – /api/preview
+=============================================================
+Gestiona previews del sistema.
+🔹 POST /api/preview/template/{templateId}
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/direct
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/live
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/template/{templateId}/multiple
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/compare/{templateId1}/{templateId2}
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/validate
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/template/{templateId}/mobile
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/template/{templateId}/export
+    Crea un nuevo preview.
+
+🔹 POST /api/preview/thumbnails
+    Crea un nuevo preview.
+
+🔹 GET /api/preview/sample-data/{category}
+    Consulta todos los previews.
+
+🔹 GET /api/preview/status
+    Consulta todos los previews.
+
+
+=============================================================
+📘 PrintersController – /api/printers
+=============================================================
+Gestiona printers del sistema.
+
+=============================================================
+📘 PrintingAuditController – /api/printingaudit
+=============================================================
+Gestiona printingaudits del sistema.
+🔹 GET /api/printingaudit/history
+    Consulta todos los printingaudits.
+    • Usa DTO: typeof(PagedResult<PrintAuditEventDTO>
+
+🔹 POST /api/printingaudit/reports
+    Crea un nuevo printingaudit.
+
+🔹 GET /api/printingaudit/metrics
+    Consulta todos los printingaudits.
+
+🔹 POST /api/printingaudit/analysis/patterns
+    Crea un nuevo printingaudit.
+
+🔹 GET /api/printingaudit/security/alerts
+    Consulta todos los printingaudits.
+
+🔹 GET /api/printingaudit/templates/{templateId}/changes
+    Consulta todos los printingaudits.
+    • Usa DTO: typeof(List<TemplateChangeHistoryDTO>
+
+🔹 GET /api/printingaudit/resources/{resourceType}
+    Consulta todos los printingaudits.
+
+🔹 POST /api/printingaudit/security/anomalies
+    Crea un nuevo printingaudit.
+
+🔹 POST /api/printingaudit/export
+    Crea un nuevo printingaudit.
+
+🔹 GET /api/printingaudit/users/{userId?}/stats
+    Consulta todos los printingaudits.
+
+🔹 POST /api/printingaudit/dashboard
+    Crea un nuevo printingaudit.
+
+🔹 POST /api/printingaudit/archive
+    Crea un nuevo printingaudit.
+
+🔹 GET /api/printingaudit/metrics/quick
+    Consulta todos los printingaudits.
+
+🔹 GET /api/printingaudit/health
+    Consulta todos los printingaudits.
+
+
+=============================================================
+📘 PrintingCostController – /api/printingcost
+=============================================================
+Gestiona printingcosts del sistema.
+🔹 GET /api/printingcost/configurations
+    Consulta todos los printingcosts.
+    • Usa DTO: PagedResult<PrintingCostConfigDTO
+
+🔹 GET /api/printingcost/configurations/{id}
+    Consulta printingcost por el ID.
+    • Usa DTO: PrintingCostConfigDTO
+
+🔹 POST /api/printingcost/configurations
+    Crea un nuevo printingcost.
+    • Usa DTO: PrintingCostConfigDTO
+
+🔹 PUT /api/printingcost/configurations/{id}
+    Actualiza printingcost por el ID.
+    • Usa DTO: PrintingCostConfigDTO
+
+🔹 DELETE /api/printingcost/configurations/{id}
+    Elimina printingcost por el ID.
+
+🔹 PATCH /api/printingcost/configurations/{id}/toggle-status
+    Actualiza parcialmente printingcost por el ID.
+
+🔹 GET /api/printingcost/configurations/{id}/history
+    Consulta printingcost por el ID.
+    • Usa DTO: PagedResult<CostConfigHistoryDTO
+
+🔹 POST /api/printingcost/calculate
+    Crea un nuevo printingcost.
+    • Usa DTO: PrintJobCostResultDTO
+
+🔹 GET /api/printingcost/print-jobs/{printJobId}
+    Consulta todos los printingcosts.
+    • Usa DTO: PrintJobCostResultDTO
+
+🔹 POST /api/printingcost/print-jobs/{printJobId}/recalculate
+    Crea un nuevo printingcost.
+    • Usa DTO: PrintJobCostResultDTO
+
+🔹 GET /api/printingcost/print-jobs/history
+    Consulta todos los printingcosts.
+    • Usa DTO: PagedResult<PrintJobCostDTO
+
+🔹 GET /api/printingcost/device-mappings
+    Consulta todos los printingcosts.
+    • Usa DTO: PagedResult<DeviceCostMappingDTO
+
+🔹 GET /api/printingcost/device-mappings/{id}
+    Consulta printingcost por el ID.
+    • Usa DTO: DeviceCostMappingDTO
+
+🔹 POST /api/printingcost/device-mappings
+    Crea un nuevo printingcost.
+    • Usa DTO: DeviceCostMappingDTO
+
+🔹 PUT /api/printingcost/device-mappings/{id}
+    Actualiza printingcost por el ID.
+    • Usa DTO: DeviceCostMappingDTO
+
+🔹 DELETE /api/printingcost/device-mappings/{id}
+    Elimina printingcost por el ID.
+
+🔹 GET /api/printingcost/devices/{deviceId}/applicable-configurations
+    Consulta todos los printingcosts.
+    • Usa DTO: List<PrintingCostConfigDTO
+
+🔹 POST /api/printingcost/estimate
+    Crea un nuevo printingcost.
+    • Usa DTO: CostEstimationResultDTO
+
+🔹 POST /api/printingcost/devices/{deviceId}/estimation-scenarios
+    Crea un nuevo printingcost.
+    • Usa DTO: List<CostEstimationResultDTO
+
+
+=============================================================
+📘 PrintingSecurityController – /api/printingsecurity
+=============================================================
+Gestiona printingsecuritys del sistema.
+🔹 GET /api/printingsecurity/roles
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<PrintingRoleDTO
+
+🔹 GET /api/printingsecurity/roles/{roleId}
+    Consulta todos los printingsecuritys.
+    • Usa DTO: PrintingRoleDTO
+
+🔹 POST /api/printingsecurity/roles
+    Crea un nuevo printingsecurity.
+    • Usa DTO: PrintingRoleCreateDTO
+
+🔹 PUT /api/printingsecurity/roles/{roleId}
+    Actualiza printingsecuritys.
+    • Usa DTO: PrintingRoleCreateDTO
+
+🔹 DELETE /api/printingsecurity/roles/{roleId}
+    Elimina printingsecuritys.
+
+🔹 GET /api/printingsecurity/permissions
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<PrintingPermissionDTO
+
+🔹 GET /api/printingsecurity/permissions/category/{category}
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<PrintingPermissionDTO
+
+🔹 POST /api/printingsecurity/permissions
+    Crea un nuevo printingsecurity.
+    • Usa DTO: PrintingPermissionCreateDTO
+
+🔹 PUT /api/printingsecurity/permissions/{permissionId}
+    Actualiza printingsecuritys.
+    • Usa DTO: PrintingPermissionCreateDTO
+
+🔹 GET /api/printingsecurity/users/{userId}/roles
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<UserPrintingRoleDTO
+
+🔹 POST /api/printingsecurity/users/roles
+    Crea un nuevo printingsecurity.
+    • Usa DTO: UserPrintingRoleCreateDTO
+
+🔹 DELETE /api/printingsecurity/users/roles/{userRoleId}
+    Elimina printingsecuritys.
+
+🔹 GET /api/printingsecurity/roles/{roleId}/users
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<UserPrintingRoleDTO
+
+🔹 GET /api/printingsecurity/users/{userId}/permission-overrides
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<UserPermissionOverrideDTO
+
+🔹 POST /api/printingsecurity/users/permission-overrides
+    Crea un nuevo printingsecurity.
+    • Usa DTO: UserPermissionOverrideCreateDTO
+
+🔹 DELETE /api/printingsecurity/users/permission-overrides/{overrideId}
+    Elimina printingsecuritys.
+
+🔹 POST /api/printingsecurity/check-permission
+    Crea un nuevo printingsecurity.
+    • Usa DTO: PermissionCheckDTO
+
+🔹 POST /api/printingsecurity/users/{userId}/check-permissions
+    Crea un nuevo printingsecurity.
+
+🔹 GET /api/printingsecurity/users/{userId}/effective-permissions
+    Consulta todos los printingsecuritys.
+
+🔹 GET /api/printingsecurity/users/{userId}/resource-permission
+    Consulta todos los printingsecuritys.
+
+🔹 POST /api/printingsecurity/activities
+    Crea un nuevo printingsecurity.
+    • Usa DTO: PermissionActivityFilterDTO
+
+🔹 GET /api/printingsecurity/activities/suspicious
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<PermissionActivityDTO
+
+🔹 GET /api/printingsecurity/policies
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<SecurityPolicyDTO
+
+🔹 GET /api/printingsecurity/policies/category/{category}
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<SecurityPolicyDTO
+
+🔹 POST /api/printingsecurity/policies
+    Crea un nuevo printingsecurity.
+    • Usa DTO: SecurityPolicyCreateDTO
+
+🔹 PUT /api/printingsecurity/policies/{policyId}
+    Actualiza printingsecuritys.
+    • Usa DTO: SecurityPolicyCreateDTO
+
+🔹 PATCH /api/printingsecurity/policies/{policyId}/toggle
+    Actualiza parcialmente printingsecuritys.
+
+🔹 GET /api/printingsecurity/dashboard
+    Consulta todos los printingsecuritys.
+    • Usa DTO: PermissionsDashboardDTO
+
+🔹 GET /api/printingsecurity/stats/roles
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<RoleUsageStatsDTO
+
+🔹 GET /api/printingsecurity/stats/permissions
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<PermissionUsageStatsDTO
+
+🔹 GET /api/printingsecurity/stats/violations
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<SecurityViolationStatsDTO
+
+🔹 GET /api/printingsecurity/stats/users
+    Consulta todos los printingsecuritys.
+    • Usa DTO: List<UserAccessStatsDTO
+
+🔹 POST /api/printingsecurity/initialize
+    Crea un nuevo printingsecurity.
+
+🔹 GET /api/printingsecurity/validate
+    Consulta todos los printingsecuritys.
+
+🔹 POST /api/printingsecurity/cleanup
+    Crea un nuevo printingsecurity.
+
+🔹 POST /api/printingsecurity/sync-audit
+    Crea un nuevo printingsecurity.
+
+
+=============================================================
+📘 TemplatesController – /api/templates
+=============================================================
+Gestiona templates del sistema.
+🔹 GET /api/templates
+    Consulta todos los templates.
+    • Usa DTO: IEnumerable<LabelTemplateDTO
+
+🔹 GET /api/templates/{id}
+    Consulta templates por el ID.
+    • Usa DTO: LabelTemplateDetailDTO
+
+🔹 POST /api/templates
+    Crea un nuevo templates.
+    • Usa DTO: LabelTemplateCreateDTO
+
+🔹 POST /api/templates/{id}/render
+    Acción especial sobre el templates por el ID.
+
+🔹 GET /api/templates/categories
+    Consulta todos los templates.
+
+
+=============================================================
+📘 TraceabilityHooksController – /api/traceabilityhooks
+=============================================================
+Gestiona traceabilityhooks del sistema.
+🔹 GET /api/traceabilityhooks/auto-print-status
+    Consulta todos los traceabilityhooks.
+
+🔹 POST /api/traceabilityhooks/configure-auto-print
+    Crea un nuevo traceabilityhooks.
+
+🔹 GET /api/traceabilityhooks/auto-templates/{operationType}/{action}
+    Consulta todos los traceabilityhooks.
+
+🔹 POST /api/traceabilityhooks/trigger-manual
+    Crea un nuevo traceabilityhooks.
+
+🔹 GET /api/traceabilityhooks/statistics
+    Consulta todos los traceabilityhooks.
+
+🔹 GET /api/traceabilityhooks/events-history
+    Consulta todos los traceabilityhooks.
+
+

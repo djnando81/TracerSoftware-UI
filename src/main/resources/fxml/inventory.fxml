@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tracersoftware.dashboard.inventory.InventoryController" styleClass="root">
+    <center>
+        <VBox alignment="TOP_LEFT" spacing="12" style="-fx-padding:18;">
+            <Label text="Inventario" styleClass="top-title" />
+            <Label fx:id="placeholder" text="(Placeholder) Información de inventario." />
+            <TableView prefHeight="240" />
+        </VBox>
+    </center>
+</BorderPane>

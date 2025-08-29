@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root type="HBox" xmlns:fx="http://javafx.com/fxml/1" spacing="8" alignment="CENTER_RIGHT">
+    <children>
+        <Label text="Mostrar:" />
+        <ComboBox fx:id="cboPageSize" prefWidth="80" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnPrev" text="◀" />
+        <Label fx:id="lblPage" text="1 / 1" />
+        <Button fx:id="btnNext" text="▶" />
+    </children>
+</fx:root>

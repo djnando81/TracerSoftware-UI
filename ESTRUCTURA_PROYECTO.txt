@@ -1,0 +1,72 @@
+
+# Estructura del Proyecto TracerSoftwareApp
+
+Este proyecto JavaFX está organizado de forma modular para facilitar el mantenimiento, escalabilidad y reutilización de componentes. A continuación se describe la estructura de carpetas y su propósito:
+
+## Módulos principales (cada uno con dto, service, controller)
+
+- **usuarios**
+- **proveedores**
+- **clientes**
+- **almacenes**
+- **bajasmateriaprima**
+- **auth**
+- **dispositivos**
+- **inventariomateriaprima**
+- **inventariopt**
+- **materiasprimas**
+- **ordenesproduccion**
+- **procesos**
+- **ordensalida**
+- **ordenpedidomateriaprima**
+- **productosterminados**
+- **roles**
+- **embalajes**
+
+## Módulos adicionales según API (estructura base creada)
+
+- **admin**
+- **apiinfo**
+- **auditoria**
+- **bootstrapauth**
+- **bootstrap**
+- **cache**
+- **categoriasmateriaprima**
+- **categoriasproductoterminado**
+- **configuracionesdocumento**
+- **configuracionsistema**
+- **demo**
+- **dispositivoshealth**
+- **documentacion**
+- **export**
+
+Cada módulo contiene:
+- **dto/**: Clases Data Transfer Object
+- **service/**: Lógica de negocio y servicios
+- **controller/**: Controladores de interfaz y lógica de presentación
+
+## Carpeta común
+
+- **comun/controles/**: Controles personalizados reutilizables en toda la aplicación, como:
+  - DataGrids paginados
+  - Mensajes toast
+  - Barras de progreso
+  - Otros componentes visuales avanzados
+
+## Código fuente principal
+
+- **src/main/java/com/tracersoftware/app/**
+  - `MainApp.java`: Clase principal que inicia la aplicación JavaFX.
+
+## Dependencias
+
+El proyecto utiliza Maven y las siguientes librerías principales:
+- JavaFX (UX principal)
+- ControlsFX (controles avanzados y notificaciones)
+- JFoenix (controles estilo Material Design)
+- JFreeChart (gráficos dinámicos)
+
+## Notas de desarrollo
+- Mantener la separación de responsabilidades entre DTO, Service y Controller.
+- Los controles personalizados deben ubicarse en `comun/controles` para su fácil reutilización.
+- Actualizar este archivo cada vez que se agregue o modifique un módulo o carpeta relevante.

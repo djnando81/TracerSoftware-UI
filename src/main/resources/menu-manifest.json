@@ -1,0 +1,11 @@
+{
+  "title": "Tracer Dashboard",
+  "items": [
+  { "id": "dashboard", "label": "Dashboard", "icon": "fa5s-home", "route": "/dashboard" },
+  { "id": "orders", "label": "Órdenes", "icon": "fa5s-box", "route": "/orders" },
+  { "id": "inventory", "label": "Inventario", "icon": "fa5s-warehouse", "route": "/inventory" },
+  { "id": "reports", "label": "Reportes", "icon": "fa5s-chart-line", "route": "/reports" },
+  { "id": "usuarios", "label": "Usuarios", "icon": "fa5s-users", "route": "/usuarios_list" },
+  { "id": "settings", "label": "Configuración", "icon": "fa5s-cog", "action": "openSettings" }
+  ]
+}

@@ -1,0 +1,85 @@
+/* Toggle switch styles for ActiveToggleControl */
+
+.toggle-track {
+    -fx-pref-width: 48px; /* reduced size to fit table cell */
+    -fx-pref-height: 26px;
+    -fx-background-radius: 18px;
+    -fx-padding: 3px; /* inner padding for knob */
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.04), 2, 0, 0, 1);
+    -fx-background-color: #efefef; /* neutral off */
+}
+
+.toggle-track.selected {
+    -fx-background-color: #07bfae; /* strong teal on */
+}
+
+.toggle-track:hover {
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.08), 4, 0, 0, 1);
+}
+
+.toggle-track:focused {
+    -fx-border-color: rgba(0,0,0,0.08);
+    -fx-border-width: 1px;
+}
+
+.toggle-knob {
+    -fx-pref-width: 20px; /* compact knob */
+    -fx-pref-height: 20px;
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(0,0,0,0.12);
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.12), 3, 0, 0, 1);
+}
+
+/* slight inset so knob doesn't stick to edges */
+.active-toggle-container .toggle-track {
+    -fx-padding: 3px;
+}
+
+/* Container class if needed for spacing */
+.active-toggle-container {
+    -fx-padding: 2px 4px 2px 4px; /* small horizontal padding */
+    -fx-alignment: center;
+}
+
+/* Table cell stack to align toggle neatly */
+.cell-toggle-stack {
+    -fx-alignment: center;
+    -fx-padding: 0 8 0 8; /* ensure horizontal spacing in cell */
+}
+
+/* Overlay shown during API call */
+.toggle-overlay {
+    -fx-background-color: rgba(255,255,255,0.6); /* semi-transparent white */
+    -fx-background-radius: 6px;
+}
+
+/* Small spinner styling */
+.small-spinner .spinner {
+    -fx-pref-width: 14px;
+    -fx-pref-height: 14px;
+}
+
+/* Full-row overlay */
+.row-overlay {
+    -fx-background-color: rgba(0,0,0,0.36); /* dark overlay by default */
+}
+
+.row-overlay-container {
+    -fx-background-radius: 4px;
+}
+
+/* Inline overlay loader (small circular) */
+.inline-overlay-loader {
+    -fx-shape: "M16 2 A14 14 0 1 1 15.999 2"; /* circular path */
+    -fx-background-color: transparent;
+    -fx-border-color: #07bfae; /* loader accent color */
+    -fx-border-width: 2px;
+    -fx-pref-width: 12px;
+    -fx-pref-height: 12px;
+    -fx-background-radius: 9px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 2,0,0,1);
+    -fx-alignment: center;
+}

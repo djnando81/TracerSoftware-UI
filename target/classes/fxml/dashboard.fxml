@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tracersoftware.dashboard.controller.DashboardController" fx:id="rootPane" styleClass="root">
+	<left>
+		<!-- Placeholder left panel: the dynamic menu will be inserted here by MenuBarBuilder -->
+		<VBox fx:id="sidebar" styleClass="app-sidebar">
+			<!-- header: brand -->
+			<HBox spacing="8" alignment="CENTER_LEFT" styleClass="brand" style="-fx-padding: 6 6 12 6;">
+				<Label text="ADMIN PANEL" styleClass="brand" />
+			</HBox>
+			<!-- user avatar and name -->
+			<HBox spacing="8" alignment="CENTER_LEFT">
+				<Label text="A" styleClass="sidebar-avatar" />
+				<Label text="Usuario" fx:id="lblCurrentUser" styleClass="sidebar-user-name" />
+			</HBox>
+		</VBox>
+	</left>
+
+	<top>
+		<HBox spacing="12" alignment="CENTER_LEFT" styleClass="topbar" style="-fx-padding: 10 18 10 18;">
+			<Label text="Dashboard" styleClass="top-title" />
+			<Region HBox.hgrow="ALWAYS" />
+			<HBox spacing="8" alignment="CENTER_RIGHT">
+				<TextField promptText="Buscar..." styleClass="search" prefWidth="260" />
+				<Label fx:id="lblCurrentUser" text="Usuario" styleClass="userLabel" />
+			</HBox>
+		</HBox>
+	</top>
+
+	<center>
+		<ScrollPane fx:id="mainScroll" fitToWidth="true">
+			<VBox spacing="20" style="-fx-padding: 20 28 28 28;">
+				<GridPane fx:id="mainGrid" hgap="18" vgap="18">
+					<columnConstraints>
+						<ColumnConstraints percentWidth="33" />
+						<ColumnConstraints percentWidth="33" />
+						<ColumnConstraints percentWidth="34" />
+					</columnConstraints>
+
+					<!-- Card: Ventas -->
+					<VBox styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+						<Label text="Ventas" styleClass="card-title" />
+						<Label fx:id="salesLabel" text="508" styleClass="card-value" />
+					</VBox>
+
+					<!-- Card: Usuarios -->
+					<VBox styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+						<Label text="Usuarios" styleClass="card-title" />
+						<Label text="120" styleClass="card-value" />
+					</VBox>
+
+					<!-- Card: Órdenes -->
+					<VBox styleClass="card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+						<Label text="Órdenes" styleClass="card-title" />
+						<Label text="32" styleClass="card-value" />
+					</VBox>
+
+					<!-- Main panel -->
+					<VBox styleClass="panel" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3">
+						<Label text="Panel principal" styleClass="panel-title" />
+						<Label text="Aquí puedes mostrar gráficos, tablas o información relevante." styleClass="panel-sub" />
+					</VBox>
+				</GridPane>
+			</VBox>
+		</ScrollPane>
+	</center>
+</BorderPane>

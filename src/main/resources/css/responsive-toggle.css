@@ -1,0 +1,103 @@
+/* Styles for ResponsiveToggleButton */
+.responsive-toggle {
+    -fx-padding: 0;               /* no extra padding */
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-font-weight: 600;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+    -fx-text-fill: white;
+    -fx-min-height: 24px;
+    -fx-min-width: 48px;
+}
+
+.responsive-toggle:selected, .responsive-toggle:armed {
+    -fx-background-color: #07bfae; /* active */
+    -fx-text-fill: white;
+}
+
+.responsive-toggle {
+    -fx-background-color: #e6e6e6; /* inactive */
+    -fx-text-fill: #222;
+}
+
+/* Ensure the button grows to fill cell/grid */
+.responsive-toggle {
+    -fx-max-width: Infinity;
+    -fx-max-height: Infinity;
+}
+
+/* Toggle used inside table cells (button element) */
+.cell-toggle-btn {
+    -fx-padding: 0.2em 0.4em;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+}
+.cell-toggle-btn.on {
+    -fx-background-color: #28a745; /* green */
+    -fx-text-fill: white;
+}
+.cell-toggle-btn.off {
+    -fx-background-color: #6c757d; /* gray */
+    -fx-text-fill: white;
+}
+
+/* Small inline circular loader fallback style (if used) */
+.cell-inline-loader {
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+}
+
+/* Simple toggle classes used in table cells */
+.toggle-activo {
+    -fx-background-color: #28a745; /* green */
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 6px;
+}
+.toggle-inactivo {
+    -fx-background-color: #6c757d; /* gray */
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-background-radius: 6px;
+}
+
+/* New switch track + knob styles used inside table cell */
++.cell-toggle-stack {
+    -fx-alignment: center-left;
+    -fx-padding: 0 6px;
+}
+.switch-track {
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-background-color: #e6e6e6;
+    -fx-pref-width: 44px;
+    -fx-pref-height: 22px;
+    -fx-min-width: 44px;
+    -fx-min-height: 22px;
+    -fx-max-width: 44px;
+    -fx-max-height: 22px;
+}
+.switch-track.active {
+    -fx-background-color: #07bfae; /* active color */
+}
+.switch-knob {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-pref-width: 16px;
+    -fx-pref-height: 16px;
+    -fx-min-width: 16px;
+    -fx-min-height: 16px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 4, 0, 0, 1);
+}
+
+/* keep loader small and aligned on right */
++.cell-inline-loader {
++    -fx-min-width: 12px;
++    -fx-min-height: 12px;
++}
++
