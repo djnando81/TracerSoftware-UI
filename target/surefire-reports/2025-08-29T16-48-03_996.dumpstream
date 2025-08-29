@@ -1,5 +1,0 @@
-# Created at 2025-08-29T16:48:04.319
-Boot Manifest-JAR contains absolute paths in classpath 'D:\TRACERSOFTWARE2025\APP\target\test-classes'
-Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-'other' has different root
-

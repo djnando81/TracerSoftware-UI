@@ -1,4 +1,0 @@
-[
-  { "id": 1, "nombre": "Alice", "email": "alice@example.com", "activo": true },
-  { "id": 2, "nombre": "Bob", "email": "bob@example.com", "activo": false }
-]

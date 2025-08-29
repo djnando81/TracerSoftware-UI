@@ -81,6 +81,7 @@ com\tracersoftware\ordenesproduccion\dto\OutputRealDTO.class
 com\tracersoftware\procesos\dto\ProcedimientoParametroCreateDTO.class
 com\tracersoftware\ui\menu\MenuLoader.class
 com\tracersoftware\common\controls\ActiveToggleControl$1.class
+com\tracersoftware\usuarios\UsuariosListController$2$2.class
 com\tracersoftware\ordensalida\service\OrdenSalidaService.class
 com\tracersoftware\proveedores\dto\ProveedorDTO.class
 com\tracersoftware\common\controls\MessageToast$ToastType.class
