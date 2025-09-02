@@ -24,6 +24,11 @@ public class SwitchToggleButton extends Control {
         switchedOn.set(value);
     }
 
+    // Convenience aliases so it behaves similar to a ToggleButton in code
+    public final BooleanProperty selectedProperty() { return switchedOnProperty(); }
+    public final boolean isSelected() { return isSwitchedOn(); }
+    public final void setSelected(boolean value) { setSwitchedOn(value); }
+
     @Override
     protected Skin<?> createDefaultSkin() {
         return new SwitchToggleButtonSkin(this);

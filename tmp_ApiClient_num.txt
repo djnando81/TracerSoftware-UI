@@ -1,0 +1,355 @@
+001: package com.tracersoftware.api;
+002: 
+003: import com.fasterxml.jackson.databind.JsonNode;
+004: import com.fasterxml.jackson.databind.ObjectMapper;
+005: 
+006: import java.io.File;
+007: import java.io.IOException;
+008: import java.net.URI;
+009: import java.net.http.HttpClient;
+010: import java.net.http.HttpRequest;
+011: import java.net.http.HttpResponse;
+012: import java.nio.file.Files;
+013: import java.time.Duration;
+014: import java.util.List;
+015: import java.util.Map;
+016: import java.util.stream.Collectors;
+017: import com.tracersoftware.auth.SessionManager;
+018: import java.nio.file.StandardOpenOption;
+019: import java.nio.file.Path;
+020: import java.nio.file.Paths;
+021: import java.nio.charset.StandardCharsets;
+022: import com.tracersoftware.auth.TokenStore;
+023: import com.tracersoftware.common.controls.MessageToast;
+024: import javafx.stage.Stage;
+025: 
+026: public class ApiClient {
+027: 
+028:     private final HttpClient httpClient;
+029:     private final ObjectMapper objectMapper;
+030:     private String baseUrl;
+031: 
+032:     public ApiClient() {
+033:         // never follow redirects so Authorization headers aren't lost
+034:         this.httpClient = HttpClient.newBuilder()
+035:                 .connectTimeout(Duration.ofSeconds(5))
+036:                 .followRedirects(HttpClient.Redirect.NEVER)
+037:                 .build();
+038:         this.objectMapper = new ObjectMapper();
+039:         // allow override via system property or env var, else read config.ini, else default HTTPS
+040:         String env = System.getProperty("api.baseUrl", System.getenv("API_BASE_URL"));
+041:         if (env != null && !env.isBlank()) {
+042:             this.baseUrl = env.trim();
+043:         } else {
+044:             this.baseUrl = readBaseUrlFromConfig();
+045:         }
+046:         if (this.baseUrl == null || this.baseUrl.isBlank()) {
+047:             this.baseUrl = "https://localhost:5001";
+048:         }
+049:     }
+050: 
+051:     private String readBaseUrlFromConfig() {
+052:         try {
+053:             File cfg = new File("config.ini");
+054:             if (cfg.exists()) {
+055:                 List<String> lines = Files.readAllLines(cfg.toPath());
+056:                 Map<String, String> map = lines.stream()
+057:                         .map(String::trim)
+058:                         .filter(l -> l.contains("="))
+059:                         .map(l -> l.split("=", 2))
+060:                         .collect(Collectors.toMap(a -> a[0].trim(), a -> a[1].trim(), (a, b) -> b));
+061:                 String v = map.get("api.urlBase");
+062:                 if (v != null && !v.isEmpty()) return v;
+063:             }
+064:         } catch (IOException ignored) {
+065:         }
+066:         return "http://localhost:5000";
+067:     }
+068: 
+069:     // auth tokens are no longer read directly from config.ini here. KeyManager or SessionManager
+070:     // provide tokens at request time.
+071: 
+072:     public JsonNode getJson(String path) throws IOException, InterruptedException, UnauthorizedException {
+073:         String target = path.startsWith("http") ? path : normalizeUrl(baseUrl, path);
+074:     HttpRequest.Builder rb = HttpRequest.newBuilder()
+075:         .uri(URI.create(target))
+076:         .timeout(Duration.ofSeconds(8))
+077:         .GET();
+078:     // Prefer sanitized token from auth.SessionManager, fallback to persisted TokenStore access token
+079:     String token = null;
+080:     try { token = SessionManager.get().getBearerTokenSanitized().orElse(null); } catch (Exception ignore) {}
+081:     if (token == null || token.isEmpty()) {
+082:         try { String k = TokenStore.loadAccessToken(); if (k != null && !k.isBlank()) token = k.trim(); } catch (Exception ignore) {}
+083:     }
+084:     // Defensive: if token looks invalid (literal 'refreshToken' or not JWT-like), attempt migration/cleanup
+085:     try { token = sanitizeAndMigrateToken(token); } catch (Exception ignore) {}
+086:     // Final defensive check: ensure token is proper JWT-like string before using
+087:     if (token != null) token = token.trim();
+088:     if (token != null && (token.equalsIgnoreCase("refreshToken") || token.split("\\.").length != 3)) {
+089:         // try again to read from store cleanly
+090:         try { String k = TokenStore.loadAccessToken(); if (k != null && !k.isBlank()) token = k.trim(); else token = null; } catch (Exception ignore) { token = null; }
+091:     }
+092:     // Fallback: allow a dev token from KeyManager for seamless navigation without relogin
+093:     if (token == null || token.isEmpty()) {
+094:         try { String dev = com.tracersoftware.common.KeyManager.getToken(); if (dev != null && !dev.isBlank()) token = dev.trim(); } catch (Exception ignore) {}
+095:     }
+096:     // Also write exact Authorization header + target to debug file for off-screen inspection
+097:     try {
+098:     String authHeader = (token != null && !token.isEmpty()) ? "Bearer " + token : "(none)";
+099:         Path dbg = Paths.get("debug_auth.log");
+100:         String line = java.time.ZonedDateTime.now().toString() + " | GET " + target + " | Authorization: " + authHeader + System.lineSeparator();
+101:         java.nio.file.Files.write(dbg, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+102:     } catch (Exception ignored) {}
+103:     if (token != null && !token.isEmpty()) rb.header("Authorization", "Bearer " + token);
+104:     HttpRequest req = rb.build();
+105:         logRequest(req);
+106:         HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+107:         logResponse(resp);
+108:         if (isRedirect(resp.statusCode())) {
+109:             throw new IOException("Unexpected redirect (" + resp.statusCode() + ") from " + target + ". Use correct baseUrl (HTTPS).");
+110:         }
+111:     if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+112:             return objectMapper.readTree(resp.body());
+113:         } else {
+114:             // Log response body for debugging
+115:             try {
+116:                 Path dbg = Paths.get("debug_auth.log");
+117:                 String line = java.time.ZonedDateTime.now().toString() + " | RESPONSE " + resp.statusCode() + " " + target + " | Body: " + (resp.body() == null ? "(empty)" : resp.body()) + System.lineSeparator();
+118:                 java.nio.file.Files.write(dbg, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+119:             } catch (Exception ignored) {}
+120:             if (resp.statusCode() == 401) {
+121:                 String www = resp.headers().firstValue("WWW-Authenticate").orElse("");
+122:                 try { com.tracersoftware.auth.TokenStore.clearAccessToken(); } catch (Exception ignored) {}
+123:                 throw new UnauthorizedException("HTTP 401 from " + target + (www.isBlank() ? (":" + resp.body()) : " | " + www));
+124:             }
+125:             throw new IOException("HTTP " + resp.statusCode() + " from " + target + ": " + resp.body());
+126:         }
+127:     }
+128: 
+129:     public JsonNode postJson(String path, String jsonPayload) throws IOException, InterruptedException, UnauthorizedException {
+130:         String target = path.startsWith("http") ? path : normalizeUrl(baseUrl, path);
+131:     HttpRequest.Builder rb = HttpRequest.newBuilder()
+132:         .uri(URI.create(target))
+133:         .timeout(Duration.ofSeconds(10))
+134:         .header("Content-Type", "application/json")
+135:         .POST(HttpRequest.BodyPublishers.ofString(jsonPayload));
+136:     String token2 = null;
+137:     try { token2 = SessionManager.get().getBearerTokenSanitized().orElse(null); } catch (Exception ignore) {}
+138:     if (token2 == null || token2.isEmpty()) {
+139:         try {
+140:             String k2 = TokenStore.loadAccessToken();
+141:             if (k2 != null && !k2.isBlank()) token2 = k2.trim();
+142:         } catch (Exception ignore) {}
+143:     }
+144:     if (token2 != null) token2 = token2.trim();
+145:     if (token2 != null && (token2.equalsIgnoreCase("refreshToken") || token2.split("\\.").length != 3)) {
+146:         try { String k2 = TokenStore.loadAccessToken(); if (k2 != null && !k2.isBlank()) token2 = k2.trim(); else token2 = null; } catch (Exception ignore) { token2 = null; }
+147:     }
+148:     // Fallback dev token to avoid relogin requirements in navigation
+149:     if (token2 == null || token2.isEmpty()) {
+150:         try { String dev = com.tracersoftware.common.KeyManager.getToken(); if (dev != null && !dev.isBlank()) token2 = dev.trim(); } catch (Exception ignore) {}
+151:     }
+152:     try {
+153:         String authHeader2 = (token2 != null && !token2.isEmpty()) ? "Bearer " + token2 : "(none)";
+154:         Path dbg2 = Paths.get("debug_auth.log");
+155:         String line2 = java.time.ZonedDateTime.now().toString() + " | POST " + target + " | Authorization: " + authHeader2 + System.lineSeparator();
+156:         java.nio.file.Files.write(dbg2, line2.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+157:     } catch (Exception ignored) {}
+158:     if (token2 != null && !token2.isEmpty()) rb.header("Authorization", "Bearer " + token2);
+159:     HttpRequest req = rb.build();
+160:         logRequest(req);
+161:         HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+162:         logResponse(resp);
+163:         if (isRedirect(resp.statusCode())) {
+164:             throw new IOException("Unexpected redirect (" + resp.statusCode() + ") from " + target + ". Use correct baseUrl (HTTPS).");
+165:         }
+166:     if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+167:             if (resp.body() == null || resp.body().isEmpty()) return objectMapper.createObjectNode();
+168:             return objectMapper.readTree(resp.body());
+169:         } else {
+170:             try {
+171:                 Path dbg = Paths.get("debug_auth.log");
+172:                 String line = java.time.ZonedDateTime.now().toString() + " | RESPONSE " + resp.statusCode() + " " + target + " | Body: " + (resp.body() == null ? "(empty)" : resp.body()) + System.lineSeparator();
+173:                 java.nio.file.Files.write(dbg, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+174:             } catch (Exception ignored) {}
+175:             if (resp.statusCode() == 401) {
+176:                 String www = resp.headers().firstValue("WWW-Authenticate").orElse("");
+177:                 throw new UnauthorizedException("HTTP 401 from " + target + (www.isBlank() ? (":" + resp.body()) : " | " + www));
+178:             }
+179:             throw new IOException("HTTP " + resp.statusCode() + " from " + target + ": " + resp.body());
+180:         }
+181:     }
+182: 
+183:         public JsonNode putJson(String path, String jsonPayload) throws IOException, InterruptedException, UnauthorizedException {
+184:             String target = path.startsWith("http") ? path : normalizeUrl(baseUrl, path);
+185:             HttpRequest.Builder rb = HttpRequest.newBuilder()
+186:                     .uri(URI.create(target))
+187:                     .timeout(Duration.ofSeconds(10))
+188:                     .header("Content-Type", "application/json")
+189:                     .PUT(HttpRequest.BodyPublishers.ofString(jsonPayload));
+190:             String token2 = null;
+191:             try { token2 = SessionManager.get().getBearerTokenSanitized().orElse(null); } catch (Exception ignore) {}
+192:             if (token2 == null || token2.isEmpty()) {
+193:                 try {
+194:                     String k2 = TokenStore.loadAccessToken();
+195:                     if (k2 != null && !k2.isBlank()) token2 = k2.trim();
+196:                 } catch (Exception ignore) {}
+197:             }
+198:             if (token2 != null) token2 = token2.trim();
+199:             if (token2 != null && (token2.equalsIgnoreCase("refreshToken") || token2.split("\\.").length != 3)) {
+200:                 try { String k2 = TokenStore.loadAccessToken(); if (k2 != null && !k2.isBlank()) token2 = k2.trim(); else token2 = null; } catch (Exception ignore) { token2 = null; }
+201:             }
+202:             try {
+203:                 if (token2 != null && !token2.isEmpty()) {
+204:                     String masked2 = token2.length() > 8 ? token2.substring(0,4) + "..." + token2.substring(token2.length()-4) : "****";
+205:                     MessageToast.show((Stage) null, "Auth token activo: " + masked2, MessageToast.ToastType.INFO);
+206:                 } else {
+207:                     MessageToast.show((Stage) null, "No hay token activo para llamadas API", MessageToast.ToastType.WARNING);
+208:                 }
+209:             } catch (Exception ignored) {}
+210:             try {
+211:                 String authHeader2 = (token2 != null && !token2.isEmpty()) ? "Bearer " + token2 : "(none)";
+212:                 Path dbg2 = Paths.get("debug_auth.log");
+213:                 String line2 = java.time.ZonedDateTime.now().toString() + " | PUT " + target + " | Authorization: " + authHeader2 + System.lineSeparator();
+214:                 java.nio.file.Files.write(dbg2, line2.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+215:             } catch (Exception ignored) {}
+216:             if (token2 != null && !token2.isEmpty()) rb.header("Authorization", "Bearer " + token2);
+217:             HttpRequest req = rb.build();
+218:             logRequest(req);
+219:             HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+220:             logResponse(resp);
+221:             if (isRedirect(resp.statusCode())) {
+222:                 throw new IOException("Unexpected redirect (" + resp.statusCode() + ") from " + target + ". Use correct baseUrl (HTTPS).");
+223:             }
+224:             if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+225:                 if (resp.body() == null || resp.body().isEmpty()) return objectMapper.createObjectNode();
+226:                 return objectMapper.readTree(resp.body());
+227:             } else {
+228:                 try {
+229:                     Path dbg = Paths.get("debug_auth.log");
+230:                     String line = java.time.ZonedDateTime.now().toString() + " | RESPONSE " + resp.statusCode() + " " + target + " | Body: " + (resp.body() == null ? "(empty)" : resp.body()) + System.lineSeparator();
+231:                     java.nio.file.Files.write(dbg, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+232:                 } catch (Exception ignored) {}
+233:                 if (resp.statusCode() == 401) {
+234:                     String www = resp.headers().firstValue("WWW-Authenticate").orElse("");
+235:                     throw new UnauthorizedException("HTTP 401 from " + target + (www.isBlank() ? (":" + resp.body()) : " | " + www));
+236:                 }
+237:                 throw new IOException("HTTP " + resp.statusCode() + " from " + target + ": " + resp.body());
+238:             }
+239:         }
+240: 
+241:     public JsonNode deleteJson(String path) throws IOException, InterruptedException, UnauthorizedException {
+242:         String target = path.startsWith("http") ? path : normalizeUrl(baseUrl, path);
+243:         HttpRequest.Builder rb = HttpRequest.newBuilder()
+244:                 .uri(URI.create(target))
+245:                 .timeout(Duration.ofSeconds(8))
+246:                 .DELETE();
+247:         String token = null;
+248:         try { token = SessionManager.get().getBearerTokenSanitized().orElse(null); } catch (Exception ignore) {}
+249:         if (token == null || token.isEmpty()) {
+250:             try { String k = com.tracersoftware.auth.TokenStore.loadAccessToken(); if (k != null && !k.isBlank()) token = k.trim(); } catch (Exception ignore) {}
+251:         }
+252:         try {
+253:             String authHeader = (token != null && !token.isEmpty()) ? "Bearer " + token : "(none)";
+254:             Path dbg = Paths.get("debug_auth.log");
+255:             String line = java.time.ZonedDateTime.now().toString() + " | DELETE " + target + " | Authorization: " + authHeader + System.lineSeparator();
+256:             java.nio.file.Files.write(dbg, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+257:         } catch (Exception ignored) {}
+258:         if (token != null && !token.isEmpty()) rb.header("Authorization", "Bearer " + token);
+259:         HttpRequest req = rb.build();
+260:         logRequest(req);
+261:         HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+262:         logResponse(resp);
+263:         if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+264:             if (resp.body() == null || resp.body().isEmpty()) return objectMapper.createObjectNode();
+265:             return objectMapper.readTree(resp.body());
+266:         } else {
+267:             try {
+268:                 Path dbg = Paths.get("debug_auth.log");
+269:                 String line = java.time.ZonedDateTime.now().toString() + " | RESPONSE " + resp.statusCode() + " " + target + " | Body: " + (resp.body() == null ? "(empty)" : resp.body()) + System.lineSeparator();
+270:                 java.nio.file.Files.write(dbg, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+271:             } catch (Exception ignored) {}
+272:             if (resp.statusCode() == 401) {
+273:                 String www = resp.headers().firstValue("WWW-Authenticate").orElse("");
+274:                 throw new UnauthorizedException("HTTP 401 from " + target + (www.isBlank() ? (":" + resp.body()) : " | " + www));
+275:             }
+276:             throw new IOException("HTTP " + resp.statusCode() + " from " + target + ": " + resp.body());
+277:         }
+278:     }
+279: 
+280:     private static String normalizeUrl(String base, String path) {
+281:         String b = base.endsWith("/") ? base.substring(0, base.length()-1) : base;
+282:         String p = path.startsWith("/") ? path : "/" + path;
+283:         return b + p;
+284:     }
+285: 
+286:     private static boolean isRedirect(int code) { return code == 301 || code == 302 || code == 307 || code == 308; }
+287: 
+288:     private static void logRequest(HttpRequest req) {
+289:         try {
+290:             System.out.println("[ApiClient] Request: " + req.method() + " " + req.uri());
+291:             System.out.println("[ApiClient] Headers:");
+292:             req.headers().map().forEach((k,v)-> System.out.println("  " + k + ": " + String.join(",", v)));
+293:         } catch (Exception ignored) {}
+294:     }
+295: 
+296:     private static void logResponse(HttpResponse<?> resp) {
+297:         try {
+298:             System.out.println("[ApiClient] Response: " + resp.statusCode());
+299:             System.out.println("[ApiClient] Resp Headers:");
+300:             resp.headers().map().forEach((k,v)-> System.out.println("  " + k + ": " + String.join(",", v)));
+301:         } catch (Exception ignored) {}
+302:     }
+303: 
+304:     /**
+305:      * If the provided token is clearly invalid (e.g. literal "refreshToken"), try to
+306:      * load a valid access token from TokenStore or clear legacy key.ini if needed.
+307:      */
+308:     private String sanitizeAndMigrateToken(String token) {
+309:         try {
+310:             if (token == null) token = "";
+311:             String t = token.trim();
+312:             if (t.isEmpty() || t.equalsIgnoreCase("refreshToken") || t.split("\\.").length != 3) {
+313:                 // Try TokenStore first
+314:                 try {
+315:                     String fromStore = com.tracersoftware.auth.TokenStore.loadAccessToken();
+316:                     if (fromStore != null && !fromStore.isBlank()) return fromStore.trim();
+317:                 } catch (Exception ignored) {}
+318:                 // If still bad and legacy key.ini exists, delete it (backup already handled by MainApp)
+319:                 try {
+320:                     java.nio.file.Path keyFile = java.nio.file.Paths.get(System.getProperty("user.dir"), "key.ini");
+321:                     if (java.nio.file.Files.exists(keyFile)) {
+322:                         java.nio.file.Files.deleteIfExists(keyFile);
+323:                         // log cleanup
+324:                         java.nio.file.Path dbg = java.nio.file.Paths.get("debug_auth.log");
+325:                         String line = java.time.ZonedDateTime.now().toString() + " | Removed legacy key.ini due to invalid token" + System.lineSeparator();
+326:                         java.nio.file.Files.write(dbg, line.getBytes(java.nio.charset.StandardCharsets.UTF_8), java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+327:                     }
+328:                 } catch (Exception ignored) {}
+329:                 return null;
+330:             }
+331:             return t;
+332:         } catch (Exception ex) {
+333:             return token;
+334:         }
+335:     }
+336: 
+337:     /**
+338:      * Simple static helper to verify whether the currently set token (SessionManager or KeyManager)
+339:      * is accepted by the backend. Returns true when the ping endpoint responds with 2xx.
+340:      */
+341:     public static boolean pingAuth() {
+342:         try {
+343:             ApiClient client = new ApiClient();
+344:             try {
+345:                 client.getJson("/api/apiinfo/health");
+346:                 return true;
+347:             } catch (Exception ex) {
+348:                 return false;
+349:             }
+350:         } catch (Exception e) {
+351:             return false;
+352:         }
+353:     }
+354: 
+355: }

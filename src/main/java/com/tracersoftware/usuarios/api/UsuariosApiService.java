@@ -55,7 +55,40 @@ public class UsuariosApiService {
     return apiClient.putJson("/api/usuarios/" + id, json);
     }
 
+    /**
+     * Helper to update a user by composing the expected wrapper and required fields.
+     * This avoids extra prompts on the UI by always providing required properties.
+     */
+    public JsonNode updateUserActivo(int id,
+                                     String nombre,
+                                     String email,
+                                     boolean activo,
+                                     Integer rolId) throws IOException, InterruptedException, com.tracersoftware.api.UnauthorizedException {
+        com.fasterxml.jackson.databind.node.ObjectNode flat = mapper.createObjectNode();
+        if (nombre != null) flat.put("nombre", nombre);
+        if (email != null) flat.put("email", email);
+        // Activo como 1/0 (además de booleano por compatibilidad si el backend lo acepta)
+        flat.put("Activo", activo ? 1 : 0);
+        flat.put("activo", activo);
+        if (rolId != null) flat.put("rolId", rolId);
+        return apiClient.putJson("/api/usuarios/" + id, flat.toString());
+    }
+
     public void deleteUser(int id) throws IOException, InterruptedException, com.tracersoftware.api.UnauthorizedException {
         apiClient.deleteJson("/api/usuarios/" + id);
+    }
+
+    // Toggle 'activo' via dedicated endpoint; sends both boolean and int for compatibility
+    public JsonNode toggleActivo(int id, boolean activo) throws IOException, InterruptedException, com.tracersoftware.api.UnauthorizedException {
+        com.fasterxml.jackson.databind.node.ObjectNode body = mapper.createObjectNode();
+        body.put("activo", activo);
+        body.put("estado", activo ? 1 : 0);
+        String json = body.toString();
+        try {
+            return apiClient.postJson("/api/usuarios/" + id + "/toggle-estado", json);
+        } catch (IOException ex) {
+            // alternate route name seen in some modules
+            return apiClient.postJson("/api/usuarios/" + id + "/toggle-activo", json);
+        }
     }
 }

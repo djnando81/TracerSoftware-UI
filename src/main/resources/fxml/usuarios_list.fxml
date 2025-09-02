@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.usuarios.UsuariosListController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.usuarios.controller.UsuariosListController">
     <center>
     <VBox spacing="8" style="-fx-padding:12;">
             <HBox spacing="8">

@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import com.tracersoftware.auth.TokenStore;
 import com.tracersoftware.common.controls.MessageToast;
+import com.tracersoftware.common.ConfigManager;
 import javafx.stage.Stage;
 
 public class ApiClient {
@@ -36,11 +37,18 @@ public class ApiClient {
                 .followRedirects(HttpClient.Redirect.NEVER)
                 .build();
         this.objectMapper = new ObjectMapper();
-        // allow override via system property or env var, else read config.ini, else default HTTPS
-        String env = System.getProperty("api.baseUrl", System.getenv("API_BASE_URL"));
-        if (env != null && !env.isBlank()) {
-            this.baseUrl = env.trim();
-        } else {
+        // Prefer explicit value from config.ini (api.urlBase), then env/prop, then local fallback
+        try {
+            String fromConfig = ConfigManager.getUrlBase();
+            if (fromConfig != null && !fromConfig.isBlank()) {
+                this.baseUrl = fromConfig.trim();
+            }
+        } catch (Exception ignored) {}
+        if (this.baseUrl == null || this.baseUrl.isBlank()) {
+            String env = System.getProperty("api.baseUrl", System.getenv("API_BASE_URL"));
+            if (env != null && !env.isBlank()) this.baseUrl = env.trim();
+        }
+        if (this.baseUrl == null || this.baseUrl.isBlank()) {
             this.baseUrl = readBaseUrlFromConfig();
         }
         if (this.baseUrl == null || this.baseUrl.isBlank()) {
@@ -89,15 +97,10 @@ public class ApiClient {
         // try again to read from store cleanly
         try { String k = TokenStore.loadAccessToken(); if (k != null && !k.isBlank()) token = k.trim(); else token = null; } catch (Exception ignore) { token = null; }
     }
-    // Debug: show masked token to user (will find a showing window or null)
-    try {
-        if (token != null && !token.isEmpty()) {
-            String masked = token.length() > 8 ? token.substring(0,4) + "..." + token.substring(token.length()-4) : "****";
-            MessageToast.show((Stage) null, "Auth token activo: " + masked, MessageToast.ToastType.INFO);
-        } else {
-            MessageToast.show((Stage) null, "No hay token activo para llamadas API", MessageToast.ToastType.WARNING);
-        }
-    } catch (Exception ignored) {}
+    // Fallback: allow a dev token from KeyManager for seamless navigation without relogin
+    if (token == null || token.isEmpty()) {
+        try { String dev = com.tracersoftware.common.KeyManager.getToken(); if (dev != null && !dev.isBlank()) token = dev.trim(); } catch (Exception ignore) {}
+    }
     // Also write exact Authorization header + target to debug file for off-screen inspection
     try {
     String authHeader = (token != null && !token.isEmpty()) ? "Bearer " + token : "(none)";
@@ -150,14 +153,10 @@ public class ApiClient {
     if (token2 != null && (token2.equalsIgnoreCase("refreshToken") || token2.split("\\.").length != 3)) {
         try { String k2 = TokenStore.loadAccessToken(); if (k2 != null && !k2.isBlank()) token2 = k2.trim(); else token2 = null; } catch (Exception ignore) { token2 = null; }
     }
-    try {
-        if (token2 != null && !token2.isEmpty()) {
-            String masked2 = token2.length() > 8 ? token2.substring(0,4) + "..." + token2.substring(token2.length()-4) : "****";
-            MessageToast.show((Stage) null, "Auth token activo: " + masked2, MessageToast.ToastType.INFO);
-        } else {
-            MessageToast.show((Stage) null, "No hay token activo para llamadas API", MessageToast.ToastType.WARNING);
-        }
-    } catch (Exception ignored) {}
+    // Fallback dev token to avoid relogin requirements in navigation
+    if (token2 == null || token2.isEmpty()) {
+        try { String dev = com.tracersoftware.common.KeyManager.getToken(); if (dev != null && !dev.isBlank()) token2 = dev.trim(); } catch (Exception ignore) {}
+    }
     try {
         String authHeader2 = (token2 != null && !token2.isEmpty()) ? "Bearer " + token2 : "(none)";
         Path dbg2 = Paths.get("debug_auth.log");
@@ -208,14 +207,7 @@ public class ApiClient {
             if (token2 != null && (token2.equalsIgnoreCase("refreshToken") || token2.split("\\.").length != 3)) {
                 try { String k2 = TokenStore.loadAccessToken(); if (k2 != null && !k2.isBlank()) token2 = k2.trim(); else token2 = null; } catch (Exception ignore) { token2 = null; }
             }
-            try {
-                if (token2 != null && !token2.isEmpty()) {
-                    String masked2 = token2.length() > 8 ? token2.substring(0,4) + "..." + token2.substring(token2.length()-4) : "****";
-                    MessageToast.show((Stage) null, "Auth token activo: " + masked2, MessageToast.ToastType.INFO);
-                } else {
-                    MessageToast.show((Stage) null, "No hay token activo para llamadas API", MessageToast.ToastType.WARNING);
-                }
-            } catch (Exception ignored) {}
+            // no UI toasts for token in POST/PUT
             try {
                 String authHeader2 = (token2 != null && !token2.isEmpty()) ? "Bearer " + token2 : "(none)";
                 Path dbg2 = Paths.get("debug_auth.log");
@@ -257,6 +249,9 @@ public class ApiClient {
         try { token = SessionManager.get().getBearerTokenSanitized().orElse(null); } catch (Exception ignore) {}
         if (token == null || token.isEmpty()) {
             try { String k = com.tracersoftware.auth.TokenStore.loadAccessToken(); if (k != null && !k.isBlank()) token = k.trim(); } catch (Exception ignore) {}
+        }
+        if (token == null || token.isEmpty()) {
+            try { String dev = com.tracersoftware.common.KeyManager.getToken(); if (dev != null && !dev.isBlank()) token = dev.trim(); } catch (Exception ignore) {}
         }
         try {
             String authHeader = (token != null && !token.isEmpty()) ? "Bearer " + token : "(none)";

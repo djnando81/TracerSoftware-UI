@@ -67,37 +67,51 @@
 }
 
 /* New switch track + knob styles used inside table cell */
-+.cell-toggle-stack {
+.cell-toggle-stack {
     -fx-alignment: center-left;
     -fx-padding: 0 6px;
 }
 .switch-track {
     -fx-background-radius: 12px;
     -fx-border-radius: 12px;
-    -fx-background-color: #e6e6e6;
-    -fx-pref-width: 44px;
-    -fx-pref-height: 22px;
-    -fx-min-width: 44px;
-    -fx-min-height: 22px;
-    -fx-max-width: 44px;
-    -fx-max-height: 22px;
+    -fx-background-color: #6c757d; /* off gray */
+    -fx-pref-width: 48px;
+    -fx-pref-height: 26px;
+    -fx-min-width: 48px;
+    -fx-min-height: 26px;
+    -fx-max-width: 48px;
+    -fx-max-height: 26px;
 }
 .switch-track.active {
-    -fx-background-color: #07bfae; /* active color */
+    -fx-background-color: #28a745; /* on green */
 }
 .switch-knob {
     -fx-background-color: white;
     -fx-background-radius: 12px;
-    -fx-pref-width: 16px;
-    -fx-pref-height: 16px;
-    -fx-min-width: 16px;
-    -fx-min-height: 16px;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
+    -fx-min-width: 18px;
+    -fx-min-height: 18px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 4, 0, 0, 1);
 }
 
 /* keep loader small and aligned on right */
-+.cell-inline-loader {
-+    -fx-min-width: 12px;
-+    -fx-min-height: 12px;
-+}
-+
+.cell-inline-loader {
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+}
+
+/* Styling for custom SwitchToggleButton when used inside table cells */
+.cell-switch-btn, .switch-toggle-button {
+    -fx-cursor: hand;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+    -fx-min-width: 48px;
+    -fx-min-height: 26px;
+    -fx-max-width: 48px;
+    -fx-max-height: 26px;
+}
+.cell-switch-btn:disabled, .switch-toggle-button:disabled {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}

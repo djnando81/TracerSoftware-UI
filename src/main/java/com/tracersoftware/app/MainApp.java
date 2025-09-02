@@ -79,10 +79,13 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/tracersoftware/login/login.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            // Add global button styles
+            // Add global styles
             scene.getStylesheets().add(getClass().getResource("/com/tracersoftware/common/controls/buttons.css").toExternalForm());
             // Add paginator styles
             try { scene.getStylesheets().add(getClass().getResource("/com/tracersoftware/common/controls/paginator.css").toExternalForm()); } catch (Exception ignored) {}
+            // Add toggle/switch styles used by custom controls and table cells
+            try { scene.getStylesheets().add(getClass().getResource("/css/responsive-toggle.css").toExternalForm()); } catch (Exception ignored) {}
+            try { scene.getStylesheets().add(getClass().getResource("/css/toggle.css").toExternalForm()); } catch (Exception ignored) {}
             primaryStage.setScene(scene);
             primaryStage.setFullScreen(true);
             primaryStage.show();
