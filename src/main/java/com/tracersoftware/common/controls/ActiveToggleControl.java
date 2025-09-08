@@ -85,9 +85,8 @@ public class ActiveToggleControl extends HBox {
         Task<Void> t = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                com.fasterxml.jackson.databind.node.ObjectNode payload = new com.fasterxml.jackson.databind.ObjectMapper().createObjectNode();
-                payload.put("Activo", newState);
-                api.updateUser(currentUser.getId(), payload);
+                // Use dedicated toggle endpoint to avoid DTO validation issues on PUT /api/usuarios/{id}
+                api.toggleActivo(currentUser.getId(), newState);
                 return null;
             }
         };

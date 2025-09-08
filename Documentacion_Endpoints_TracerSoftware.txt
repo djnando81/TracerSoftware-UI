@@ -1475,6 +1475,12 @@ Gestiona usuarios del sistema.
       la compone:
         - RolId : int
 
+🔹 PUT /api/usuarios/{id}/toggle-estado
+    Actualiza usuarios por el ID.
+    • Usa id de usuario UsuarioId
+      la compone:
+        - Activo : bool
+
 🔹 DELETE /api/usuarios/{id}
     Elimina usuarios por el ID.
 

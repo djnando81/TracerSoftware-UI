@@ -16,7 +16,7 @@ public class UsuariosViewController {
 
     public void showList() {
         try {
-            Node n = FXMLLoader.load(getClass().getResource("/fxml/usuarios_list.fxml"));
+            Node n = FXMLLoader.load(getClass().getResource("/usuarios/fxml/usuarios_list.fxml"));
             host.setCenter(n);
         } catch (IOException e) {
             e.printStackTrace();

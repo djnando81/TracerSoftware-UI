@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.proveedores.controller.ProveedoresFormController" styleClass="modal-card">
+    <top>
+        <Pane minHeight="15" prefHeight="15" maxHeight="15" styleClass="modal-accent" />
+    </top>
+    <center>
+        <VBox spacing="4">
+            <HBox styleClass="modal-header">
+                <Label fx:id="lblTitle" text="Nuevo Proveedor" />
+            </HBox>
+            <StackPane>
+                <ScrollPane fitToWidth="true" prefHeight="600" maxHeight="700" minHeight="600">
+                    <GridPane hgap="10" vgap="12">
+                        <padding>
+                            <Insets top="14" right="14" bottom="14" left="14" />
+                        </padding>
+                        <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" minWidth="110" prefWidth="120" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="300" prefWidth="400" />
+                        </columnConstraints>
+                        
+                        <!-- Información General -->
+                        <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                        <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="400" promptText="Nombre del proveedor" />
+                        
+                        <Label text="CUIT:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                        <TextField fx:id="txtCuit" GridPane.rowIndex="1" GridPane.columnIndex="1" prefWidth="400" promptText="xx-xxxxxxxx-x" />
+                        
+                        <Label text="Teléfono:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                        <TextField fx:id="txtTelefono" GridPane.rowIndex="2" GridPane.columnIndex="1" prefWidth="400" promptText="Número de teléfono" />
+                        
+                        <Label text="Email:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                        <TextField fx:id="txtEmail" GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="400" promptText="email@ejemplo.com" />
+                        
+                        <Label text="Dirección:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                        <TextField fx:id="txtDireccion" GridPane.rowIndex="4" GridPane.columnIndex="1" prefWidth="400" promptText="Dirección completa" />
+                        
+                        <!-- Materias Primas Asociadas -->
+                        <Label text="Materias Primas:" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                        <VBox spacing="8" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Button fx:id="btnAgregarMateria" text="+ Agregar" styleClass="btn-action-create" />
+                                <Button fx:id="btnQuitarMateria" text="- Quitar" styleClass="btn-action-cancel" />
+                            </HBox>
+                            <ListView fx:id="listMateriasPrimas" prefHeight="150" maxHeight="200" />
+                            <Label fx:id="lblCountMaterias" text="0 materias primas asociadas" styleClass="help-text" />
+                        </VBox>
+                        
+                        <!-- Estado -->
+                        <Label text="Activo:" GridPane.rowIndex="6" GridPane.columnIndex="0" />
+                        <CheckBox fx:id="chkActivo" GridPane.rowIndex="6" GridPane.columnIndex="1" selected="true" />
+                        
+                        <!-- Espaciador -->
+                        <Region GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2" minHeight="10" />
+                        
+                        <!-- Error y botones con más espacio -->
+                        <Label fx:id="lblError" textFill="red" wrapText="true" visible="false" managed="false" 
+                               GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2" 
+                               maxWidth="500" prefWidth="500" />
+                        
+                        <!-- Espaciador entre error y botones -->
+                        <Region GridPane.rowIndex="9" GridPane.columnIndex="0" GridPane.columnSpan="2" minHeight="10" />
+                        
+                        <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="10" GridPane.columnIndex="1">
+                            <ProgressIndicator fx:id="progress" prefWidth="20" prefHeight="20" visible="false" />
+                            <Button fx:id="btnGuardar" text="Guardar" styleClass="btn-action-create" />
+                            <Button fx:id="btnCancelar" text="Cancelar" styleClass="btn-action-cancel" />
+                        </HBox>
+                    </GridPane>
+                </ScrollPane>
+                <AnchorPane fx:id="overlay" visible="false" pickOnBounds="false" style="-fx-background-color: rgba(0,0,0,0.35);">
+                    <children><ProgressIndicator fx:id="overlayProgress" prefWidth="64" prefHeight="64" /></children>
+                </AnchorPane>
+            </StackPane>
+        </VBox>
+    </center>
+</BorderPane>

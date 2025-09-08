@@ -1,0 +1,23 @@
+[
+  {
+    "Id": 1,
+    "Nombre": "Lacteos",
+    "Descripcion": "Productos derivados de la leche",
+    "FechaCreacion": "2024-01-15T10:30:00Z",
+    "Activo": true
+  },
+  {
+    "Id": 2,
+    "Nombre": "Carnes",
+    "Descripcion": "Productos cárnicos y derivados",
+    "FechaCreacion": "2024-01-20T14:20:00Z",
+    "Activo": true
+  },
+  {
+    "Id": 3,
+    "Nombre": "Cereales",
+    "Descripcion": "Granos y cereales integrales",
+    "FechaCreacion": "2024-01-25T09:15:00Z",
+    "Activo": false
+  }
+]

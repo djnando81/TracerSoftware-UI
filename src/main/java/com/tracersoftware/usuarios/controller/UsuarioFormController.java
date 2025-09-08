@@ -22,11 +22,14 @@ public class UsuarioFormController {
     @FXML private CheckBox chkActivo;
     @FXML private javafx.scene.control.ComboBox<String> cboRol;
     @FXML private javafx.scene.layout.AnchorPane overlay;
+    @FXML private javafx.scene.control.PasswordField txtPassword;
+    @FXML private javafx.scene.control.PasswordField txtPassword2;
     @FXML private ProgressIndicator overlayProgress;
     @FXML private Button btnSave;
     @FXML private Button btnCancel;
     @FXML private Label lblError;
     @FXML private ProgressIndicator progress;
+    @FXML private Label lblTitle;
 
     private final UsuariosApiService service = new UsuariosApiService();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -51,10 +54,21 @@ public class UsuarioFormController {
         this.service.createUser(payload);
     }
 
-    @FXML
+    @FXML 
     public void initialize() {
         btnSave.setOnAction(evt -> onSave());
         btnCancel.setOnAction(evt -> onCancel());
+        try {
+            if (btnSave != null) {
+                btnSave.setText("Crear");
+                btnSave.getStyleClass().removeAll("btn-action-update");
+                if (!btnSave.getStyleClass().contains("btn-action-create")) btnSave.getStyleClass().add("btn-action-create");
+            }
+            if (btnCancel != null) {
+                if (!btnCancel.getStyleClass().contains("btn-action-cancel")) btnCancel.getStyleClass().add("btn-action-cancel");
+            }
+            if (lblTitle != null) lblTitle.setText("Nuevo Usuario");
+        } catch (Exception ignored) {}
         lblError.setText("");
         progress.setVisible(false);
         // populate roles from API (fallback static list)
@@ -121,7 +135,24 @@ public class UsuarioFormController {
 
     private void onSave() {
         if (!validateInputs()) return;
-    setLoading(true);
+        // Validación de contraseña (crear: obligatorio; editar: opcional pero debe coincidir si se informa)
+        String p1 = null, p2 = null;
+        try { p1 = txtPassword == null ? null : txtPassword.getText(); } catch (Exception ignored) {}
+        try { p2 = txtPassword2 == null ? null : txtPassword2.getText(); } catch (Exception ignored) {}
+        final boolean isEdit = (editingId != null && editingId > 0);
+        if (!isEdit) {
+            if (p1 == null || p1.trim().isEmpty()) { lblError.setText("La contraseña es obligatoria al crear."); return; }
+            if (p1.length() < 6) { lblError.setText("La contraseña debe tener al menos 6 caracteres."); return; }
+            if (p1 == null || !p1.equals(p2)) { lblError.setText("Las contraseñas no coinciden."); return; }
+        } else {
+            boolean any = (p1 != null && !p1.isBlank()) || (p2 != null && !p2.isBlank());
+            if (any) {
+                if (p1 == null || p2 == null || p1.isBlank() || p2.isBlank()) { lblError.setText("Debe completar y confirmar la contraseña."); return; }
+                if (p1.length() < 6) { lblError.setText("La contraseña debe tener al menos 6 caracteres."); return; }
+                if (!p1.equals(p2)) { lblError.setText("Las contraseñas no coinciden."); return; }
+            }
+        }
+        setLoading(true);
         ObjectNode payload = mapper.createObjectNode();
     payload.put("nombre", txtNombre.getText().trim());
     payload.put("email", txtEmail.getText().trim());
@@ -137,11 +168,19 @@ public class UsuarioFormController {
             } else payload.put("rol", selName);
         }
     } catch (Exception ignored) {}
+        // incluir password en payload según reglas
+        try {
+            if (editingId == null || editingId <= 0) {
+                if (p1 != null) payload.put("password", p1);
+            } else {
+                if (p1 != null && !p1.isBlank()) payload.put("password", p1);
+            }
+        } catch (Exception ignored) {}
 
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
-                if (editingId != null && editingId > 0) {
+                if (isEdit) {
                     service.updateUser(editingId, payload);
                 } else {
                     service.createUser(payload);
@@ -151,6 +190,11 @@ public class UsuarioFormController {
         };
         task.setOnSucceeded(e -> {
             setLoading(false);
+            try {
+                com.tracersoftware.common.controls.MessageToast.show(null,
+                        isEdit ? "Usuario actualizado correctamente" : "Usuario creado correctamente",
+                        com.tracersoftware.common.controls.MessageToast.ToastType.SUCCESS);
+            } catch (Exception ignored) {}
             closeWindow();
         });
         task.setOnFailed(e -> {
@@ -158,6 +202,11 @@ public class UsuarioFormController {
             ex.printStackTrace();
             Platform.runLater(() -> {
                 lblError.setText("Error al crear usuario: " + ex.getMessage());
+                try {
+                    com.tracersoftware.common.controls.MessageToast.show(null,
+                            "Error guardando usuario: " + (ex == null ? "desconocido" : ex.getMessage()),
+                            com.tracersoftware.common.controls.MessageToast.ToastType.ERROR);
+                } catch (Exception ignored) {}
                 setLoading(false);
             });
         });
@@ -170,6 +219,14 @@ public class UsuarioFormController {
     public void setUsuario(com.tracersoftware.usuarios.model.UsuarioDTO u) {
         if (u == null) return;
         this.editingId = u.getId();
+        try {
+            if (btnSave != null) {
+                btnSave.setText("Actualizar");
+                btnSave.getStyleClass().removeAll("btn-action-create");
+                if (!btnSave.getStyleClass().contains("btn-action-update")) btnSave.getStyleClass().add("btn-action-update");
+            }
+            if (lblTitle != null) lblTitle.setText("Editar Usuario");
+        } catch (Exception ignored) {}
         txtNombre.setText(u.getNombre());
         txtEmail.setText(u.getEmail());
         chkActivo.setSelected(u.isActivo());

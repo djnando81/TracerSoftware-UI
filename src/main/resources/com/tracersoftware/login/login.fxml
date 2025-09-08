@@ -18,6 +18,7 @@
                     <Button text="↻  Reconectar API" fx:id="reconnectButton" onAction="#onReconnect" styleClass="button-yellow form-button" prefWidth="240" maxWidth="280" minHeight="32" maxHeight="36" style="-fx-font-size: 13px; -fx-font-family: 'Segoe UI', 'Arial', sans-serif;" />
                 </VBox>
                 <Label fx:id="apiStatusLabel" text="Estado API: ..." style="-fx-font-size: 13px; -fx-padding: 8 0 0 0; -fx-alignment: center;" alignment="CENTER" />
+                <Label fx:id="apiStatusDetailLabel" text="" style="-fx-font-size: 11px; -fx-text-fill: #607d8b; -fx-padding: 2 0 0 0; -fx-alignment: center;" alignment="CENTER" wrapText="true" />
             </VBox>
             <HBox alignment="CENTER" style="-fx-padding: 32 0 0 0;">
             </HBox>

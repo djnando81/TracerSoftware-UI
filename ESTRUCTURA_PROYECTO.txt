@@ -1,72 +1,1846 @@
+# Guía de Estructura y Estándares – TracerSoftware App
 
-# Estructura del Proyecto TracerSoftwareApp
+Esta guía define cómo crear y mantener módulos con UI y API coherentes en TracerSoftware. Úsala como referencia completa para implementar cualquier módulo nuevo siguiendo los estándares establecidos.
 
-Este proyecto JavaFX está organizado de forma modular para facilitar el mantenimiento, escalabilidad y reutilización de componentes. A continuación se describe la estructura de carpetas y su propósito:
+## ARQUITECTURA DEL SISTEMA
 
-## Módulos principales (cada uno con dto, service, controller)
+### Estructura de Proyecto
+```
+TracerSoftware/
+├── API/ (ASP.NET Core Backend)
+│   ├── Controllers/          # Endpoints REST con versionado v1
+│   ├── DTOs/                # Objetos de transferencia de datos
+│   ├── Models/              # Entidades de base de datos
+│   ├── Services/            # Lógica de negocio
+│   ├── Authorization/       # Permisos y roles
+│   └── Data/               # Contexto de Entity Framework
+├── src/main/java/ (JavaFX Frontend)
+│   ├── com/tracersoftware/
+│   │   ├── <modulo>/
+│   │   │   ├── model/       # DTOs del cliente
+│   │   │   ├── api/         # Servicios API
+│   │   │   └── controller/  # Controladores JavaFX
+│   │   └── common/          # Componentes reutilizables
+└── src/main/resources/
+    ├── <modulo>/fxml/       # Archivos FXML por módulo
+    └── css/                 # Estilos globales
+```
 
-- **usuarios**
-- **proveedores**
-- **clientes**
-- **almacenes**
-- **bajasmateriaprima**
-- **auth**
-- **dispositivos**
-- **inventariomateriaprima**
-- **inventariopt**
-- **materiasprimas**
-- **ordenesproduccion**
-- **procesos**
-- **ordensalida**
-- **ordenpedidomateriaprima**
-- **productosterminados**
-- **roles**
-- **embalajes**
+### Flujo de Datos
+1. **JavaFX UI** → llama a **ApiService** 
+2. **ApiService** → consume **REST API**
+3. **Controller** → procesa con **Service** 
+4. **Service** → persiste con **Entity Framework**
 
-## Módulos adicionales según API (estructura base creada)
+## MÓDULOS IMPLEMENTADOS
 
-- **admin**
-- **apiinfo**
-- **auditoria**
-- **bootstrapauth**
-- **bootstrap**
-- **cache**
-- **categoriasmateriaprima**
-- **categoriasproductoterminado**
-- **configuracionesdocumento**
-- **configuracionsistema**
-- **demo**
-- **dispositivoshealth**
-- **documentacion**
-- **export**
+### ✅ USUARIOS - COMPLETO
+**Estado**: Sistema de gestión de usuarios con toggle de estado funcional
+**Archivos Backend**:
+- `API/Controllers/UsuariosController.cs` - Controller con CRUD completo + toggle
+- `API/Models/Usuario.cs` - Entidad de usuario
+- `API/DTOs/UsuarioDTO.cs` - DTO de transferencia
+- `API/Authorization/Permisos.cs` - Permisos: UsuariosRead, UsuariosWrite, UsuariosDelete
 
-Cada módulo contiene:
-- **dto/**: Clases Data Transfer Object
-- **service/**: Lógica de negocio y servicios
-- **controller/**: Controladores de interfaz y lógica de presentación
+**Archivos Frontend**:
+- `src/main/java/com/tracersoftware/usuarios/controller/UsuariosListController.java`
+- `src/main/java/com/tracersoftware/usuarios/api/UsuariosApiService.java`
+- `src/main/resources/usuarios/usuarios_list.fxml` - Lista estandarizada con toggle
 
-## Carpeta común
+**Características implementadas**:
+- ✅ Toggle de estado activo/inactivo (`PUT /api/usuarios/{id}/toggle-estado`)
+- ✅ CRUD completo con validación de permisos
+- ✅ UI estandarizada con SearchBar, ExportBar y PaginatorControl
+- ✅ SwitchToggleButton funcional para cambio de estado
+- ✅ Manejo de errores y mensajes de confirmación
 
-- **comun/controles/**: Controles personalizados reutilizables en toda la aplicación, como:
-  - DataGrids paginados
-  - Mensajes toast
-  - Barras de progreso
-  - Otros componentes visuales avanzados
+### ✅ MATERIAS PRIMAS - COMPLETO
+**Estado**: Módulo de referencia con todas las funcionalidades estándar
+**Archivos Frontend**:
+- `src/main/java/com/tracersoftware/materiasprimas/model/MateriaPrimaItem.java`
+- `src/main/java/com/tracersoftware/materiasprimas/api/MateriasPrimasApiService.java`
+- `src/main/java/com/tracersoftware/materiasprimas/controller/MateriasPrimasListController.java`
+- `src/main/java/com/tracersoftware/materiasprimas/controller/MateriaPrimaFormController.java`
+- `src/main/resources/materiasprimas/materiasprimas_list.fxml`
+- `src/main/resources/materiasprimas/materiasprima_form.fxml`
 
-## Código fuente principal
+**Características especiales**:
+- ✅ Scroll horizontal y vertical en DataGrid
+- ✅ Relación con categorías y unidades de medida
+- ✅ Gestión de stocks y costos
+- ✅ Formulario modal con validación completa
+- ✅ ExportBar con datos completos y filtros
 
-- **src/main/java/com/tracersoftware/app/**
-  - `MainApp.java`: Clase principal que inicia la aplicación JavaFX.
+### ✅ ROLES - COMPLETO  
+**Estado**: Sistema de gestión de roles y permisos
+**Archivos Frontend**:
+- `src/main/java/com/tracersoftware/roles/model/RolItem.java`
+- `src/main/java/com/tracersoftware/roles/api/RolesApiService.java`
+- `src/main/java/com/tracersoftware/roles/controller/RolesListController.java`
+- `src/main/java/com/tracersoftware/roles/controller/RolFormController.java`
+- `src/main/resources/roles/roles_list.fxml`
 
-## Dependencias
+**Características implementadas**:
+- ✅ CRUD completo de roles del sistema
+- ✅ Asignación de permisos por rol
+- ✅ Toggle de estado activo/inactivo
+- ✅ UI estandarizada con todos los componentes obligatorios
 
-El proyecto utiliza Maven y las siguientes librerías principales:
-- JavaFX (UX principal)
-- ControlsFX (controles avanzados y notificaciones)
-- JFoenix (controles estilo Material Design)
-- JFreeChart (gráficos dinámicos)
+### ✅ CATEGORÍAS MATERIA PRIMA - COMPLETO
+**Estado**: Maestro de categorías para clasificación de materias primas  
+**Archivos Frontend**:
+- `src/main/java/com/tracersoftware/categoriasmateriaprima/`
+- `src/main/resources/categoriasmateriaprima/categorias_list.fxml`
 
-## Notas de desarrollo
-- Mantener la separación de responsabilidades entre DTO, Service y Controller.
-- Los controles personalizados deben ubicarse en `comun/controles` para su fácil reutilización.
-- Actualizar este archivo cada vez que se agregue o modifique un módulo o carpeta relevante.
+**Características implementadas**:
+- ✅ Gestión completa de categorías
+- ✅ Relación jerárquica con materias primas
+- ✅ Toggle de estado y exportación
+
+## COMPONENTES GLOBALES IMPLEMENTADOS
+
+### 🎯 CONTROLES REUTILIZABLES (100% Funcionales)
+
+#### 1. **ExportBar** - Control de Exportación Universal
+- **Ubicación**: `src/main/java/com/tracersoftware/common/controls/ExportBar.java`
+- **Funcionalidades**:
+  - ✅ Exportación a Excel (verde) - Formato .xlsx con estilos
+  - ✅ Exportación a CSV (azul) - Separado por comas
+  - ✅ Exportación a TXT (gris) - Texto plano delimitado por tabs
+  - ✅ Exportación a PDF (morado) - Formato tabular profesional
+  - ✅ Modos: "Solo seleccionados" y "Todo (servidor)"
+  - ✅ Guardado automático con timestamp
+  - ✅ Integración automática con cualquier TableView
+
+#### 2. **SearchBar** - Buscador Universal
+- **Ubicación**: `src/main/java/com/tracersoftware/common/controls/SearchBar.java`
+- **Funcionalidades**:
+  - ✅ Búsqueda en tiempo real con debounce
+  - ✅ Filtrado local y delegación a servidor
+  - ✅ Reinicio automático de paginación
+  - ✅ Placeholder configurable
+
+#### 3. **PaginatorControl** - Paginación Estándar
+- **Ubicación**: `src/main/java/com/tracersoftware/common/controls/PaginatorControl.java`
+- **Funcionalidades**:
+  - ✅ Navegación por páginas con botones
+  - ✅ Selector de tamaño de página (10, 25, 50, 100)
+  - ✅ Información de registros (X de Y elementos)
+  - ✅ Binding reactivo con propiedades JavaFX
+
+#### 4. **SwitchToggleButton** - Toggle de Estado
+- **Ubicación**: `src/main/java/com/tracersoftware/common/controls/SwitchToggleButton.java`
+- **Funcionalidades**:
+  - ✅ Botón tipo switch iOS/Android
+  - ✅ Estilos CSS responsivos (`css/toggle.css`)
+  - ✅ Integración con endpoints de toggle
+  - ✅ Manejo automático de errores con reversión
+
+#### 5. **ActiveToggleControl** - Toggle Avanzado con API
+- **Ubicación**: `src/main/java/com/tracersoftware/common/controls/ActiveToggleControl.java`
+- **Funcionalidades**:
+  - ✅ Toggle con llamada automática a API
+  - ✅ Loading state y error handling
+  - ✅ Revert automático en caso de fallo
+
+### 🎨 SISTEMA DE ESTILOS UNIFICADO
+
+#### Botones Estándar (buttons.css)
+```css
+/* Botones por Color */
+.button-blue     /* Nuevo, Actualizar, CSV */
+.button-green    /* Crear, Excel, Agregar */
+.button-red      /* Eliminar, Cancelar */
+.button-yellow   /* Editar, Modificar */
+.button-gray     /* TXT, Neutros */
+.button-purple   /* PDF, Premium */
+
+/* Utilidades */
+.btn-small       /* Botones compactos */
+.icon-btn        /* Botones con iconos */
+.btn-primary     /* Botón principal */
+
+/* Estados de Acción */
+.btn-action-create   /* Verde - Crear */
+.btn-action-update   /* Azul - Actualizar */  
+.btn-action-cancel   /* Rojo - Cancelar */
+```
+
+#### Layout Estándar (modal.css)
+```css
+.modal-card      /* Contenedor principal del modal */
+.modal-accent    /* Barra superior para drag */
+.modal-header    /* Header con título */
+.form-section    /* Secciones del formulario */
+.field-label     /* Labels de campos */
+.help-text       /* Texto de ayuda */
+.status-label    /* Labels de estado */
+```
+
+## PATRONES DE IMPLEMENTACIÓN OBLIGATORIOS
+
+### 🏗️ ESTRUCTURA DE MÓDULOS
+
+#### Estructura de Archivos por Módulo
+```
+<modulo>/
+├── model/
+│   ├── <Modulo>Item.java      # DTO principal del listado
+│   └── <Modulo>Detail.java    # DTO detallado (opcional)
+├── api/  
+│   └── <Modulo>ApiService.java # Cliente REST para el módulo
+├── controller/
+│   ├── <Modulo>ListController.java  # Controlador de listado
+│   ├── <Modulo>FormController.java  # Controlador de formulario
+│   └── <Modulo>ViewController.java  # Controlador principal (opcional)
+└── fxml/
+    ├── <modulo>_list.fxml     # Vista de listado
+    ├── <modulo>_form.fxml     # Modal de formulario
+    └── <modulo>_view.fxml     # Vista principal (opcional)
+```
+
+### 🎯 ENDPOINTS API ESTÁNDAR
+
+#### Convenciones de Rutas (Backend ASP.NET Core)
+```csharp
+[Route("api/v1/<modulo-plural>")]           // Ruta principal v1
+[Route("api/<modulo-legacy>")]              // Compatibilidad legacy
+
+// Endpoints Obligatorios
+[HttpGet]                                   // GET /api/v1/<modulo> - Listar
+[HttpGet("{id}")]                          // GET /api/v1/<modulo>/{id} - Obtener
+[HttpPost]                                 // POST /api/v1/<modulo> - Crear  
+[HttpPut("{id}")]                          // PUT /api/v1/<modulo>/{id} - Actualizar
+[HttpDelete("{id}")]                       // DELETE /api/v1/<modulo>/{id} - Eliminar
+
+// Toggle de Estado (si aplica)
+[HttpPut("{id}/toggle-estado")]            // PUT /api/v1/<modulo>/{id}/toggle-estado
+[HttpPatch("{id}/toggle-activo")]          // PATCH /api/v1/<modulo>/{id}/toggle-activo
+```
+
+#### Códigos de Respuesta Estándar
+- **200 OK**: Consultas exitosas
+- **201 Created**: Creación exitosa  
+- **204 No Content**: Actualización/eliminación exitosa
+- **400 Bad Request**: Errores de validación
+- **401 Unauthorized**: No autenticado
+- **403 Forbidden**: Sin permisos
+- **404 Not Found**: Recurso no existe
+- **409 Conflict**: Conflictos de integridad
+- **500 Internal Server Error**: Errores del sistema
+
+### 🔐 SISTEMA DE PERMISOS
+
+#### Estructura de Permisos por Módulo
+```csharp
+public static class Permisos {
+    // Por cada módulo: Read, Write, Delete
+    public const string <Modulo>Read = "<Modulo>:Read";
+    public const string <Modulo>Write = "<Modulo>:Write"; 
+    public const string <Modulo>Delete = "<Modulo>:Delete";
+}
+```
+
+#### Aplicación en Controllers
+```csharp
+[HttpGet]
+[Authorize(Policy = Permisos.<Modulo>Read)]
+
+[HttpPost]
+[Authorize(Policy = Permisos.<Modulo>Write)]
+
+[HttpDelete("{id}")]
+[Authorize(Policy = Permisos.<Modulo>Delete)]
+```
+
+## MÓDULOS PENDIENTES DE IMPLEMENTACIÓN
+
+### 🚧 ALTA PRIORIDAD
+
+#### 1. **ALMACENES**
+- **Objetivo**: Gestión de ubicaciones de almacenamiento
+- **Funcionalidades**:
+  - CRUD de almacenes con ubicaciones
+  - Capacidades y restricciones por almacén  
+  - Asignación de materias primas y productos
+  - Control de acceso por usuario
+
+#### 2. **INVENTARIO MATERIA PRIMA**
+- **Objetivo**: Control de stock y movimientos
+- **Funcionalidades**:
+  - Stock actual por almacén y lote
+  - Movimientos de entrada, salida y transferencias
+  - Alertas de stock mínimo/máximo
+  - Trazabilidad completa de lotes
+
+#### 3. **ENTRADAS MATERIA PRIMA**
+- **Objetivo**: Recepción y registro de materiales
+- **Funcionalidades**:
+  - Recepción contra órdenes de compra
+  - Control de calidad en recepción
+  - Generación automática de lotes
+  - Distribución a almacenes
+
+#### 4. **ÓRDENES DE PEDIDO MATERIA PRIMA**
+- **Objetivo**: Gestión de compras a proveedores
+- **Funcionalidades**:
+  - Creación de órdenes de compra
+  - Seguimiento de estados (pendiente, enviado, recibido)
+  - Integración con proveedores y materias primas
+  - Alertas de vencimiento
+
+### 🏭 MEDIA PRIORIDAD
+
+#### 5. **PRODUCTOS TERMINADOS**
+- **Objetivo**: Catálogo de productos fabricados
+- **Funcionalidades**:
+  - Definición de productos y presentaciones
+  - Fórmulas de producción (BOM)
+  - Costos estándar y precios
+  - Códigos de barras y etiquetado
+
+#### 6. **FORMULACIONES**
+- **Objetivo**: Recetas y fórmulas de producción
+- **Funcionalidades**:
+  - Definición de ingredientes y proporciones
+  - Versionado de fórmulas
+  - Escalado automático de cantidades
+  - Control de cambios y aprobaciones
+
+#### 7. **ÓRDENES DE PRODUCCIÓN**
+- **Objetivo**: Planificación y control de manufactura
+- **Funcionalidades**:
+  - Programación de lotes de producción
+  - Consumo de materias primas
+  - Registro de rendimientos y mermas
+  - Estados de progreso
+
+#### 8. **CLIENTES**
+- **Objetivo**: Gestión de cartera de clientes
+- **Funcionalidades**:
+  - Datos de contacto y facturación
+  - Historial de pedidos y productos
+  - Clasificación y segmentación
+  - Condiciones comerciales
+
+### 📊 BAJA PRIORIDAD
+
+#### 9. **ÓRDENES DE SALIDA**
+- **Objetivo**: Despacho de productos terminados
+- **Funcionalidades**:
+  - Preparación de pedidos de clientes
+  - Picking y packing
+  - Control de calidad de salida
+  - Documentación de envío
+
+#### 10. **EMBALAJES**
+- **Objetivo**: Gestión de envases y empaques
+- **Funcionalidades**:
+  - Catálogo de tipos de embalaje
+  - Capacidades y restricciones
+  - Costos y proveedores
+  - Trazabilidad de uso
+
+#### 11. **BAJAS MATERIA PRIMA**
+- **Objetivo**: Control de desperdicios y descarte
+- **Funcionalidades**:
+  - Registro de causas de baja
+  - Autorización y aprobación
+  - Impacto en inventarios
+  - Reportes de mermas
+
+#### 12. **INVENTARIO PRODUCTOS TERMINADOS**
+- **Objetivo**: Control de stock de productos fabricados
+- **Funcionalidades**:
+  - Stock por almacén y lote
+  - Movimientos y transferencias
+  - Fechas de vencimiento
+  - Reservas y disponibilidad
+
+## ROADMAP DE IMPLEMENTACIÓN
+
+### 📅 FASE 1: FUNDACIÓN (4-6 semanas)
+1. ✅ **Usuarios** - Sistema de acceso y permisos
+2. ✅ **Roles** - Gestión de permisos por rol  
+3. ✅ **Materias Primas** - Catálogo base de materiales
+4. ✅ **Categorías MP** - Clasificación de materiales
+5. ✅ **Proveedores** - Cartera de suministradores
+
+### 📅 FASE 2: INVENTARIOS (6-8 semanas)  
+6. 🚧 **Almacenes** - Ubicaciones de almacenamiento
+7. 🚧 **Inventario MP** - Control de stocks y movimientos
+8. 🚧 **Entradas MP** - Recepción de materiales
+9. 🚧 **Órdenes Pedido MP** - Compras a proveedores
+
+### 📅 FASE 3: PRODUCCIÓN (8-10 semanas)
+10. 🚧 **Productos Terminados** - Catálogo de productos
+11. 🚧 **Formulaciones** - Recetas de fabricación
+12. 🚧 **Órdenes de Producción** - Control de manufactura
+
+### 📅 FASE 4: COMERCIALIZACIÓN (6-8 semanas)
+13. 🚧 **Clientes** - Gestión de cartera
+14. 🚧 **Órdenes de Salida** - Despacho de productos
+15. 🚧 **Inventario PT** - Stock de productos terminados
+
+### 📅 FASE 5: OPTIMIZACIÓN (4-6 semanas)
+16. 🚧 **Embalajes** - Gestión de envases
+17. 🚧 **Bajas MP** - Control de desperdicios
+18. 🚧 **Reportes Avanzados** - Analytics y KPIs
+19. 🚧 **Integración IoT** - Dispositivos y sensores
+
+## GUÍA DE IMPLEMENTACIÓN PASO A PASO
+
+### 🎯 CREAR UN NUEVO MÓDULO
+
+#### Paso 1: Definir el Modelo de Datos
+```java
+// 1. Crear el DTO principal
+public class <Modulo>Item {
+    private int id;
+    private String nombre;
+    private boolean activo;
+    // ... campos específicos del módulo
+    
+    // Getters y setters
+}
+```
+
+#### Paso 2: Implementar el API Service
+```java
+// 2. Crear el cliente REST  
+public class <Modulo>ApiService {
+    private final ApiClient api = new ApiClient();
+    
+    public List<<Modulo>Item> listAll() throws Exception {
+        // Implementar consumo de API
+    }
+    
+    public JsonNode toggleEstado(int id, boolean activo) throws Exception {
+        // Implementar toggle si aplica
+    }
+    
+    // ... otros métodos CRUD
+}
+```
+
+#### Paso 3: Crear el Controller de Listado
+```java
+// 3. Implementar controlador con componentes obligatorios
+public class <Modulo>ListController implements ViewLifecycle {
+    @FXML private TableView<<Modulo>Item> table;
+    @FXML private HBox exportBarContainer;  // OBLIGATORIO
+    @FXML private PaginatorControl paginator;
+    @FXML private SearchBar searchBar;
+    
+    @FXML public void initialize() {
+        // Configurar ExportBar OBLIGATORIO
+        setupExportBar();
+        
+        // Configurar tabla con columnas estándar
+        setupTable();
+        
+        // Configurar botones con estilos estándar  
+        setupButtons();
+    }
+}
+```
+
+#### Paso 4: Diseñar la Vista FXML
+```xml
+<!-- 4. Crear FXML con estructura estándar -->
+<BorderPane>
+    <center>
+        <VBox spacing="8" style="-fx-padding:12;">
+            <!-- Header con título y búsqueda -->
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Gestión de <Módulo>" styleClass="title-label"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <SearchBar fx:id="searchBar"/>
+                <Button fx:id="btnNuevo" text="➕ Nuevo"/>
+            </HBox>
+            
+            <!-- Tabla principal -->
+            <TableView fx:id="table" VBox.vgrow="ALWAYS"/>
+            
+            <!-- ExportBar (OBLIGATORIO) -->
+            <HBox fx:id="exportBarContainer" alignment="CENTER_RIGHT"/>
+            
+            <!-- Paginador -->
+            <PaginatorControl fx:id="paginator"/>
+        </VBox>
+    </center>
+</BorderPane>
+```
+
+#### Paso 5: Implementar el Backend
+```csharp
+// 5. Crear controller ASP.NET Core
+[ApiController]
+[Route("api/v1/<modulo-plural>")]
+public class <Modulo>Controller : ControllerBase {
+    
+    [HttpGet]
+    [Authorize(Policy = Permisos.<Modulo>Read)]
+    public async Task<List<<Modulo>DTO>> GetAll() {
+        // Implementar listado
+    }
+    
+    [HttpPut("{id}/toggle-estado")]
+    [Authorize(Policy = Permisos.<Modulo>Write)]  
+    public async Task<IActionResult> ToggleEstado(int id) {
+        // Implementar toggle
+    }
+    
+    // ... otros endpoints CRUD
+}
+```
+
+#### Paso 6: Agregar al Menú
+```json
+// 6. Actualizar menu-manifest.json
+{
+  "items": [
+    {
+      "id": "<modulo>",
+      "label": "Gestión de <Módulo>", 
+      "icon": "fa5s-icon",
+      "route": "/<modulo>_list"
+    }
+  ]
+}
+```
+
+### ✅ CHECKLIST DE IMPLEMENTACIÓN
+
+#### Frontend (JavaFX)
+- [ ] DTO principal con todos los campos del backend
+- [ ] ApiService con métodos CRUD completos
+- [ ] ListController con ExportBar obligatorio
+- [ ] FormController con validación y loading
+- [ ] **Callback setOnSaved() implementado en FormController**
+- [ ] **Callback configurado en openForm() del ListController**
+- [ ] FXML con estructura estándar y componentes obligatorios
+- [ ] Estilos CSS aplicados según estándares
+- [ ] Manejo de errores con MessageToast
+- [ ] Toggle de estado (si aplica)
+- [ ] **Actualización automática de lista después de CRUD**
+
+#### Backend (ASP.NET Core)  
+- [ ] Entity model con relaciones correctas
+- [ ] DTO para transferencia de datos
+- [ ] Service con lógica de negocio
+- [ ] Controller con endpoints estándar
+- [ ] Permisos definidos y aplicados
+- [ ] Validación de datos de entrada
+- [ ] Manejo de errores con códigos HTTP correctos
+- [ ] Endpoint de toggle (si aplica)
+
+#### Integración
+- [ ] Comunicación API funcionando
+- [ ] Manejo de errores end-to-end
+- [ ] Entrada en menú de navegación  
+- [ ] Permisos configurados en roles
+- [ ] Pruebas de funcionalidad completa
+- [ ] **Actualización automática de DataGrid** (Ver sección específica)
+
+Con esta guía actualizada, cualquier desarrollador puede implementar un módulo nuevo siguiendo los patrones establecidos y garantizando la consistencia en toda la aplicación.
+
+## 🔄 ACTUALIZACIÓN AUTOMÁTICA DE DATAGRIDS
+
+### Patrón de Actualización Inmediata
+Para garantizar que las listas se actualicen inmediatamente después de crear, editar o eliminar registros, se debe implementar el siguiente patrón estándar:
+
+#### 1. **Callback en FormController** (OBLIGATORIO)
+```java
+public class <Modulo>FormController {
+    private Runnable onSavedCallback; // Callback para ejecutar cuando se guarde exitosamente
+    
+    // OBLIGATORIO: Método para establecer callback de actualización
+    public void setOnSaved(Runnable callback) {
+        this.onSavedCallback = callback;
+    }
+    
+    // En el método de guardado exitoso:
+    saveTask.setOnSucceeded(e -> {
+        // Actualizar datos locales
+        currentItem = item;
+        
+        // Mostrar mensaje de éxito
+        MessageToast.show(null, "Registro guardado exitosamente", MessageToast.ToastType.SUCCESS);
+        result = true;
+        
+        // EJECUTAR CALLBACK PARA ACTUALIZAR LISTA INMEDIATAMENTE
+        if (onSavedCallback != null) {
+            onSavedCallback.run();
+        }
+        
+        closeWindow();
+    });
+}
+```
+
+#### 2. **Implementación en ListController** (OBLIGATORIO)
+```java
+public class <Modulo>ListController {
+    private void openForm(<Modulo>Item item) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/.../form.fxml"));
+            Parent root = loader.load();
+            <Modulo>FormController controller = loader.getController();
+            
+            // ESTABLECER CALLBACK PARA ACTUALIZAR LISTA INMEDIATAMENTE
+            controller.setOnSaved(() -> load());
+            
+            // Configurar modo (crear/editar)
+            if (item != null) {
+                controller.edit(item);
+            } else {
+                controller.create();
+            }
+            
+            // Mostrar modal
+            ModalUtils.showModalAndWait(ownerStage, root, title);
+            
+        } catch (Exception ex) { 
+            MessageToast.showSystemError(null, "Error: " + ex.getMessage()); 
+        }
+    }
+}
+```
+
+#### 3. **Beneficios del Patrón**
+- ✅ **Actualización inmediata**: La lista se actualiza tan pronto como se guarda
+- ✅ **No requiere validación**: No depende de verificar si el modal fue cancelado
+- ✅ **Consistencia**: Siempre muestra los datos más recientes
+- ✅ **Mejor UX**: El usuario ve los cambios instantáneamente
+- ✅ **Menos código**: Elimina la necesidad de verificar estados del formulario
+
+#### 4. **Casos de Uso Cubiertos**
+- **Crear nuevo registro**: Lista se actualiza mostrando el nuevo elemento
+- **Editar registro existente**: Lista se actualiza mostrando los cambios
+- **Eliminar registro**: Lista se actualiza removiendo el elemento (usando callback en confirmación)
+- **Toggle de estado**: Lista se actualiza mostrando el nuevo estado
+
+#### 5. **Implementación para Eliminación**
+```java
+private void deleteItem(<Modulo>Item item) {
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    alert.setTitle("Confirmar eliminación");
+    alert.setHeaderText("¿Está seguro de eliminar este registro?");
+    
+    alert.showAndWait().ifPresent(response -> {
+        if (response == ButtonType.OK) {
+            Task<Void> deleteTask = new Task<>() {
+                @Override protected Void call() throws Exception {
+                    service.delete(item.getId());
+                    return null;
+                }
+            };
+            deleteTask.setOnSucceeded(e -> {
+                MessageToast.show(null, "Registro eliminado exitosamente", MessageToast.ToastType.SUCCESS);
+                load(); // ACTUALIZAR LISTA INMEDIATAMENTE
+            });
+            deleteTask.setOnFailed(e -> {
+                MessageToast.showSystemError(null, "Error al eliminar");
+            });
+            new Thread(deleteTask, "<modulo>-delete").start();
+        }
+    });
+}
+```
+
+#### 6. **Método load() Estándar** (OBLIGATORIO)
+```java
+private void load() {
+    Task<List<<Modulo>Item>> task = new Task<>() { 
+        @Override protected List<<Modulo>Item> call() throws Exception { 
+            return service.listAll(); 
+        } 
+    };
+    task.setOnSucceeded(e -> { 
+        full.clear(); 
+        if (task.getValue() != null) full.addAll(task.getValue()); 
+        applyPage(); // Reaplicar filtros y paginación
+    });
+    task.setOnFailed(e -> {
+        MessageToast.showSystemError(null, "Error cargando datos: " + 
+            (task.getException() == null ? "" : task.getException().getMessage()));
+    });
+    new Thread(task, "<modulo>-load").start();
+}
+```
+
+### 🎯 Reglas de Implementación
+
+#### ✅ HACER (Buenas Prácticas)
+- Usar `setOnSaved(Runnable callback)` en todos los formularios
+- Llamar al callback inmediatamente después del éxito de guardado
+- Usar `load()` como callback estándar para recargar completamente
+- Implementar loading asíncrono con `Task` para no bloquear la UI
+- Mostrar mensajes de éxito antes de cerrar el formulario
+- Preservar filtros y paginación actual después de recargar
+
+#### ❌ NO HACER (Anti-patrones)
+- No verificar `isCancelled()` y `getResult()` para decidir si actualizar
+- No recargar solo cuando el modal retorna un resultado exitoso
+- No usar `Platform.runLater()` innecesario para operaciones síncronas simples
+- No actualizar solo elementos específicos (mejor recargar completo)
+- No ignorrar errores de recarga después de guardado exitoso
+
+### 📋 Checklist de Actualización Automática
+
+#### Para FormController:
+- [ ] Variable `onSavedCallback` declarada
+- [ ] Método `setOnSaved(Runnable callback)` implementado
+- [ ] Callback ejecutado en `setOnSucceeded` del Task de guardado
+- [ ] Callback ejecutado DESPUÉS de mostrar mensaje de éxito
+- [ ] Callback ejecutado ANTES de cerrar ventana
+
+#### Para ListController:
+- [ ] Callback `() -> load()` establecido antes de mostrar modal
+- [ ] Método `load()` implementa recarga asíncrona completa
+- [ ] Método `applyPage()` preserva filtros y paginación
+- [ ] Eliminación también llama a `load()` después del éxito
+- [ ] Toggle de estado maneja actualización en caso de error
+
+#### Para Integración:
+- [ ] Modal se abre correctamente con callback configurado
+- [ ] Creación de nuevos registros actualiza lista inmediatamente
+- [ ] Edición de registros actualiza lista inmediatamente  
+- [ ] Eliminación actualiza lista inmediatamente
+- [ ] No hay demora perceptible entre guardado y actualización
+- [ ] Filtros y paginación se mantienen después de actualizar
+
+## COMPONENTES OBLIGATORIOS PARA MÓDULOS
+
+### 1. ExportBar (OBLIGATORIO en todos los listados)
+- **Ubicación**: Después de la tabla principal y antes del PaginatorControl, alineado a la derecha
+- **Contenedor**: `<HBox fx:id="exportBarContainer" spacing="8" alignment="CENTER_RIGHT" />`
+- **Implementación**:
+  ```java
+  com.tracersoftware.common.controls.ExportBar exportBar = 
+      new com.tracersoftware.common.controls.ExportBar(table, "nombre_modulo", () -> service.listAll());
+  ```
+- **Estilos automáticos**: 
+  - Excel: botón verde (`button-green`)
+  - CSV: botón azul (`button-blue`) 
+  - TXT: botón gris (`button-gray`)
+  - PDF: botón morado (`button-purple`)
+- **Funcionalidades**: Solo seleccionados, Todo (servidor), guardado automático con timestamp
+
+### 2. Estilos de Botones (OBLIGATORIOS)
+- **Botón Nuevo**: `button-blue`, `btn-primary`, `icon-btn` + texto "➕ Nuevo"
+- **Botón Editar**: `btn-small`, `button-yellow`, `icon-btn`
+- **Botón Eliminar**: `btn-small`, `button-red`, `icon-btn`
+- **Botón Crear**: `btn-action-create` (verde)
+- **Botón Actualizar**: `btn-action-update` (azul)
+- **Botón Cancelar**: `btn-action-cancel` (rojo)
+
+### 3. TableView con Columnas Estándar (OBLIGATORIO)
+- **ID**: Primera columna, ancho 80px
+- **Nombre**: Columna principal, ancho 200px
+- **Estado/Activo**: SwitchToggleButton, ancho 100px
+- **Acciones**: Última columna, botones Editar/Eliminar, ancho 150px
+- **Configuración**: `CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN`
+
+### 4. SwitchToggleButton para Estados (OBLIGATORIO si hay campo activo/estado)
+- **Clase CSS**: `cell-switch-btn`
+- **Dimensiones**: 48x26 px
+- **Endpoint**: `PUT/PATCH {id}/toggle-estado` o `{id}/toggle-activo`
+- **Manejo de errores**: Revertir estado en UI si falla
+
+### 5. Estructura de Layout (OBLIGATORIO)
+```xml
+<VBox spacing="8" style="-fx-padding:12;" fillWidth="true">
+    <!-- Header con título, SearchBar y botón Nuevo -->
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Título del Módulo" style="-fx-font-size:16px; -fx-font-weight:bold;" />
+        <Region HBox.hgrow="ALWAYS" />
+        <SearchBar fx:id="searchBar" />
+        <Button fx:id="btnNuevo" text="Nuevo" />
+    </HBox>
+    
+    <!-- Tabla principal -->
+    <TableView fx:id="table" VBox.vgrow="ALWAYS">
+        <!-- Columnas según el DTO -->
+    </TableView>
+    
+    <!-- OBLIGATORIO: Contenedor para ExportBar (alineado a la derecha) ANTES del paginador -->
+    <HBox fx:id="exportBarContainer" spacing="8" alignment="CENTER_RIGHT" />
+    
+    <!-- OBLIGATORIO: Paginador al final -->
+    <PaginatorControl fx:id="paginator" />
+</VBox>
+```
+
+### 6. Formularios Modales (OBLIGATORIO)
+```xml
+<VBox fx:id="root" spacing="12.0" prefHeight="600.0" prefWidth="800.0">
+    <!-- HEADER OBLIGATORIO -->
+    <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="header-container">
+        <Label fx:id="lblTitle" styleClass="title-label" text="Nuevo/Editar Elemento" />
+        <Region HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- FORMULARIO OBLIGATORIO con ScrollPane -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <VBox spacing="16.0">
+            <!-- Información General -->
+            <VBox spacing="12.0" styleClass="form-section">
+                <Label styleClass="section-label" text="Información General" />
+                <GridPane hgap="12.0" vgap="12.0">
+                    <!-- Campos principales aquí -->
+                </GridPane>
+            </VBox>
+            
+            <!-- Asociaciones con ListView (si aplica) -->
+            <VBox spacing="12.0" styleClass="form-section">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label styleClass="section-label" text="Elementos Asociados" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="btnAgregar" styleClass="button-green,btn-small,icon-btn" text="➕ Agregar" />
+                    <Button fx:id="btnQuitar" styleClass="button-red,btn-small,icon-btn" text="➖ Quitar" />
+                </HBox>
+                <VBox spacing="8.0">
+                    <Label styleClass="field-label" text="Elementos seleccionados:" />
+                    <ListView fx:id="listElementos" prefHeight="180.0" styleClass="list-view" />
+                    <Label fx:id="lblCount" styleClass="help-text" text="0 elementos asociados" />
+                </VBox>
+            </VBox>
+            
+            <!-- Estado OBLIGATORIO -->
+            <VBox spacing="8.0" styleClass="form-section">
+                <Label styleClass="section-label" text="Estado" />
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Label styleClass="field-label" text="Activo:" />
+                    <SwitchToggleButton fx:id="swActivo" />
+                    <Label fx:id="lblEstado" styleClass="status-label" text="Activo" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+
+    <!-- BOTONES OBLIGATORIOS -->
+    <HBox alignment="CENTER_RIGHT" spacing="12.0" styleClass="button-bar">
+        <Button fx:id="btnCancelar" styleClass="button-gray,btn-secondary" text="Cancelar" />
+        <Button fx:id="btnGuardar" styleClass="button-blue,btn-primary" text="💾 Guardar" />
+    </HBox>
+</VBox>
+```
+
+### 7. Patrones de Controller (OBLIGATORIOS)
+
+#### Listado Controller:
+```java
+@FXML private javafx.scene.layout.HBox exportBarContainer; // OBLIGATORIO
+
+@FXML public void initialize() {
+    // Configuración de tabla y columnas...
+    
+    // ExportBar OBLIGATORIO
+    if (exportBarContainer != null) {
+        com.tracersoftware.common.controls.ExportBar exportBar = 
+            new com.tracersoftware.common.controls.ExportBar(table, "nombre_modulo", () -> service.listAll());
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        javafx.scene.layout.HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        exportBarContainer.getChildren().addAll(spacer, exportBar);
+    }
+    
+    // Botón Nuevo OBLIGATORIO
+    if (btnNuevo != null) {
+        btnNuevo.getStyleClass().addAll("button-blue", "btn-primary", "icon-btn");
+        btnNuevo.setText("➕ Nuevo");
+        btnNuevo.setOnAction(e -> openForm(null));
+    }
+}
+```
+
+#### Form Controller:
+```java
+private boolean isEdit = false;
+
+public void edit(ItemType item) {
+    this.isEdit = true;
+    this.currentItem = item;
+    // Cargar datos en campos
+    lblTitle.setText("Editar " + entityName);
+    btnSave.setText("Actualizar");
+    btnSave.getStyleClass().removeAll("btn-action-create");
+    btnSave.getStyleClass().add("btn-action-update");
+}
+```
+
+### 8. Patrón ListView para Asociaciones (OBLIGATORIO para relaciones múltiples)
+
+#### FXML para ListView de asociaciones:
+```xml
+<VBox spacing="12.0" styleClass="form-section">
+    <HBox alignment="CENTER_LEFT" spacing="12.0">
+        <Label styleClass="section-label" text="Elementos Asociados" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnAgregar" styleClass="button-green,btn-small,icon-btn" text="➕ Agregar" />
+        <Button fx:id="btnQuitar" styleClass="button-red,btn-small,icon-btn" text="➖ Quitar" />
+    </HBox>
+    
+    <VBox spacing="8.0">
+        <Label styleClass="field-label" text="Elementos seleccionados:" />
+        <ListView fx:id="listElementos" prefHeight="180.0" styleClass="list-view" />
+        <Label fx:id="lblCount" styleClass="help-text" text="0 elementos asociados" />
+    </VBox>
+</VBox>
+```
+
+#### Controller para ListView:
+```java
+@FXML private ListView<ElementType> listElementos;
+@FXML private Button btnAgregar;
+@FXML private Button btnQuitar;
+@FXML private Label lblCount;
+
+private final ObservableList<ElementType> elementos = FXCollections.observableArrayList();
+
+@FXML public void initialize() {
+    // Configuración de ListView OBLIGATORIA
+    if (listElementos != null) {
+        listElementos.setItems(elementos);
+        
+        // Cell factory personalizada OBLIGATORIA
+        listElementos.setCellFactory(listView -> new ListCell<ElementType>() {
+            @Override
+            protected void updateItem(ElementType item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    // Formato personalizado según el tipo de elemento
+                    String display = String.format("%s - %s (Info adicional)",
+                        item.getNombre(), item.getCategoria());
+                    setText(display);
+                    
+                    // Estilo según estado
+                    setStyle(item.isActivo() ? "-fx-text-fill: #2d3748;" : 
+                            "-fx-text-fill: #a0aec0; -fx-font-style: italic;");
+                }
+            }
+        });
+        
+        // Listener para actualizar contador
+        elementos.addListener((ListChangeListener<ElementType>) c -> updateCount());
+    }
+    
+    // Botones OBLIGATORIOS
+    if (btnAgregar != null) btnAgregar.setOnAction(e -> agregarElemento());
+    if (btnQuitar != null) btnQuitar.setOnAction(e -> quitarElemento());
+    
+    updateCount();
+}
+
+private void updateCount() {
+    if (lblCount != null) {
+        int count = elementos.size();
+        lblCount.setText(count + " elementos asociados");
+    }
+}
+
+private void agregarElemento() {
+    try {
+        // Cargar modal estándar OBLIGATORIO
+        javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+            getClass().getResource("/modulo/fxml/elemento_modal.fxml"));
+        javafx.scene.Parent root = loader.load();
+        ElementoModalController controller = loader.getController();
+        
+        // Mostrar modal usando ModalUtils estándar OBLIGATORIO
+        com.tracersoftware.common.ui.ModalUtils.showModalAndWait(
+            null, root, "Nuevo Elemento");
+        
+        // Verificar resultado OBLIGATORIO
+        if (!controller.isCancelled() && controller.getResult() != null) {
+            ElementType nuevoElemento = controller.getResult();
+            elementos.add(nuevoElemento);
+            MessageToast.show(null, "Elemento agregado exitosamente", MessageToast.ToastType.SUCCESS);
+        }
+        
+    } catch (Exception ex) {
+        MessageToast.showSystemError(null, "No se pudo abrir el formulario: " + ex.getMessage());
+    }
+}
+```
+
+### 9. Modal Estándar para Subformularios (OBLIGATORIO)
+
+#### FXML del Modal:
+```xml
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.modulo.controller.ElementoModalController" styleClass="modal-card">
+    <top>
+        <Pane minHeight="15" prefHeight="15" maxHeight="15" styleClass="modal-accent" />
+    </top>
+    <center>
+        <VBox spacing="4">
+            <HBox styleClass="modal-header">
+                <Label fx:id="lblTitle" text="Nuevo Elemento" />
+            </HBox>
+            <StackPane>
+                <GridPane hgap="10" vgap="10">
+                    <padding><Insets top="14" right="14" bottom="14" left="14" /></padding>
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="110" prefWidth="120" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="240" prefWidth="300" />
+                    </columnConstraints>
+                    
+                    <!-- Campos del formulario -->
+                    <Label text="Campo:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                    <TextField fx:id="txtCampo" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300" />
+                    
+                    <Label fx:id="lblError" textFill="red" wrapText="true" visible="false" managed="false" 
+                           GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2" />
+                    
+                    <!-- BOTONES OBLIGATORIOS con estilos estándar -->
+                    <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="9" GridPane.columnIndex="1">
+                        <ProgressIndicator fx:id="progress" prefWidth="20" prefHeight="20" visible="false" />
+                        <Button fx:id="btnSave" text="Crear" styleClass="btn-action-create" />
+                        <Button fx:id="btnCancel" text="Cancelar" styleClass="btn-action-cancel" />
+                    </HBox>
+                </GridPane>
+                <AnchorPane fx:id="overlay" visible="false" pickOnBounds="false" style="-fx-background-color: rgba(0,0,0,0.35);">
+                    <children><ProgressIndicator fx:id="overlayProgress" prefWidth="64" prefHeight="64" /></children>
+                </AnchorPane>
+            </StackPane>
+        </VBox>
+    </center>
+</BorderPane>
+```
+
+#### Controller del Modal:
+```java
+public class ElementoModalController {
+    @FXML private TextField txtCampo;
+    @FXML private Button btnSave;
+    @FXML private Button btnCancel;
+    @FXML private Label lblError;
+    
+    private ElementType result;
+    private boolean cancelled = true;
+    
+    @FXML public void initialize() {
+        // OBLIGATORIO: Configuración estándar de botones
+        if (btnSave != null) btnSave.setOnAction(e -> save());
+        if (btnCancel != null) btnCancel.setOnAction(e -> cancel());
+        setupValidation();
+    }
+    
+    @FXML private void save() {
+        if (!validateFields()) return;
+        
+        // Crear objeto resultado
+        result = new ElementType();
+        // Mapear campos...
+        
+        cancelled = false;
+        closeWindow();
+    }
+    
+    @FXML private void cancel() {
+        cancelled = true;
+        result = null;
+        closeWindow();
+    }
+    
+    // Métodos getter OBLIGATORIOS
+    public ElementType getResult() { return result; }
+    public boolean isCancelled() { return cancelled; }
+}
+```
+
+## Módulos y carpetas
+- Cada módulo tiene: `dto/`, `service/`, `controller/`, `fxml/`.
+- Recursos por módulo: `src/main/resources/<modulo>/fxml/…`
+- Código Java: `src/main/java/com/tracersoftware/<modulo>/…`
+
+## Controles comunes reutilizables
+- Exportación: `ExportBar` (Excel/CSV/TXT/PDF)
+  - `src/main/java/com/tracersoftware/common/controls/ExportBar.java`
+  - Muestra "Solo seleccionados" y "Todo (servidor)". Insertar sobre el paginador, a la derecha.
+
+- Paginación: `PaginatorControl`
+  - `src/main/java/com/tracersoftware/common/controls/PaginatorControl.java`
+  - Props: `pageIndexProperty()`, `pageSizeProperty()`, `setTotalItems(int)`.
+
+- Buscador: `SearchBar`
+  - `src/main/java/com/tracersoftware/common/controls/SearchBar.java`
+  - `textProperty()` para filtrar en memoria o delegar al servidor.
+
+- Toggle de estado: `SwitchToggleButton`
+  - `common/controls/SwitchToggleButton(.java|Skin.java)`; estilos en `css/toggle.css`/`css/responsive-toggle.css`.
+  - Uso típico: columna "Activo/Activa" con endpoint `PUT/PATCH {id}/toggle-estado`.
+
+## Estilos
+- CSS global botones: `src/main/resources/com/tracersoftware/common/controls/buttons.css`
+  - Clases: `btn-action-create` (Crear), `btn-action-update` (Actualizar), `btn-action-cancel` (Cancelar)
+  - Base: `.button-blue`, `.button-red`, `.button-green`, `.button-yellow`, `.button-gray`
+  - Utilitarios: `.btn-small`, `.icon-btn`
+- Botón "Nuevo" en listados (desde controller):
+  `btnNew.getStyleClass().addAll("button-blue","btn-primary","icon-btn"); btnNew.setText("➕ Nuevo");`
+
+## Estilos
+- CSS global botones: `src/main/resources/com/tracersoftware/common/controls/buttons.css`
+  - Clases: `btn-action-create` (Crear), `btn-action-update` (Actualizar), `btn-action-cancel` (Cancelar)
+  - Base: `.button-blue`, `.button-red`, `.button-green`, `.button-yellow`, `.button-gray`
+  - Utilitarios: `.btn-small`, `.icon-btn`
+- Botón “Nuevo” en listados (desde controller):
+  `btnNew.getStyleClass().addAll("button-blue","btn-primary","icon-btn"); btnNew.setText("➕ Nuevo");`
+
+## Patrón de Listados (TableView)
+- HBox superior: spacer + `SearchBar` + botón “➕ Nuevo”.
+- `TableView` con columnas reales del DTO.
+- Columna “Acciones”: botones “Editar” (amarillo) y “Eliminar” (rojo).
+- Columna de estado con `SwitchToggleButton` llamando a `toggle-estado`.
+- `PaginatorControl` al final.
+- Insertar `ExportBar` justo encima del paginador, alineada a la derecha.
+
+## Patrón de Formularios (modales)
+- Estructura: `BorderPane` → `.modal-accent` (barra superior) + `.modal-header` + `StackPane` (grid + overlay).
+- Botones: derecha, `btn-action-create` / `btn-action-update` + `btn-action-cancel`.
+- Modal sin decoración: `ModalUtils.showModalAndWait(owner, root, title)` (drag por `.modal-accent`).
+- En edición: texto “Actualizar” + clase `btn-action-update`.
+
+## ESTRUCTURA DEL MENÚ Y NAVEGACIÓN
+
+### Configuración del Menú
+- **Archivo**: `src/main/resources/menu-manifest.json`
+- **Carga**: `MenuLoader.loadFromResource("/menu-manifest.json")`
+- **Constructor**: `MenuBarBuilder.build()` genera el sidebar dinámico
+
+### Estructura JSON del Menú
+```json
+{
+  "title": "Tracer Dashboard",
+  "items": [
+    // Elementos de primer nivel (menús principales)
+    { 
+      "id": "identificador_único", 
+      "label": "Texto Visible", 
+      "icon": "fa5s-icono", 
+      "route": "/ruta_directa" 
+    },
+    // Menús con submenús (grupos colapsables)
+    { 
+      "id": "grupo_principal", 
+      "label": "Grupo Principal", 
+      "icon": "fa5s-icono-grupo", 
+      "children": [
+        { "id": "sub1", "label": "Submenú 1", "icon": "fa5s-icono1", "route": "/ruta1" },
+        { "id": "sub2", "label": "Submenú 2", "icon": "fa5s-icono2", "route": "/ruta2" }
+      ]
+    }
+  ]
+}
+```
+
+### Ubicaciones Estándar por Módulo
+
+#### 1. ELEMENTOS DE PRIMER NIVEL (Menús Principales)
+- **Dashboard**: `{ "id": "dashboard", "route": "/dashboard" }`
+- **Usuarios**: `{ "id": "usuarios", "route": "/usuarios_list" }`
+- **Órdenes**: `{ "id": "orders", "route": "/orders" }`
+- **Inventario**: `{ "id": "inventory", "route": "/inventory" }`
+- **Reportes**: `{ "id": "reports", "route": "/reports" }`
+
+#### 2. GRUPO "MATERIAS PRIMAS" (Submenús de MP)
+```json
+{ "id": "materiasprimas", "label": "Materias Primas", "icon": "fa5s-vials", "children": [
+  { "id": "mp_admin", "label": "Administración", "route": "/materiasprimas_list" },
+  { "id": "mp_recepcion", "label": "Recepción de Materia Prima", "route": "/materiasprimas_recepcion" },
+  { "id": "mp_inventario", "label": "Inventario", "route": "/materiasprimas_inventario" },
+  { "id": "mp_categorias", "label": "Categorías", "route": "/categoriasmateriaprima_list" },
+  { "id": "mp_almacenes", "label": "Almacenes MP", "route": "/materiasprimas_almacenes" },
+  { "id": "mp_proveedores", "label": "Proveedores", "route": "/proveedores_list" }
+]}
+```
+
+#### 3. GRUPO "CONFIGURACIÓN" (Administración del Sistema)
+```json
+{ "id": "settings", "label": "Configuración", "icon": "fa5s-cog", "children": [
+  { "id": "roles", "label": "Roles", "route": "/roles_list" },
+  // Agregar aquí: configuraciones del sistema, parámetros, etc.
+]}
+```
+
+### Convenciones de Naming
+
+#### IDs y Rutas:
+- **Módulos principales**: `id = nombre_modulo`, `route = "/nombre_modulo"`
+- **Listados**: `route = "/modulo_list"` → busca `/modulo/fxml/modulo_list.fxml`
+- **Submenús**: `id = "prefijo_nombre"` (ej. `mp_admin`, `mp_proveedores`)
+
+#### Iconos FontAwesome 5 Solid (fa5s-):
+- **Dashboard**: `fa5s-home`
+- **Usuarios**: `fa5s-users` 
+- **Inventario**: `fa5s-warehouse`, `fa5s-boxes`
+- **Materias Primas**: `fa5s-vials`
+- **Proveedores**: `fa5s-people-carry`, `fa5s-truck-loading`
+- **Configuración**: `fa5s-cog`, `fa5s-tools`
+- **Reportes**: `fa5s-chart-line`, `fa5s-file-alt`
+- **Categorías**: `fa5s-tags`
+- **Almacenes**: `fa5s-warehouse`
+- **Seguridad**: `fa5s-user-shield`, `fa5s-lock`
+
+### Dónde Agregar Nuevos Módulos
+
+#### Para un módulo INDEPENDIENTE:
+1. Agregar al array principal `items` como elemento de primer nivel
+2. Posición: después de elementos core, antes de "Configuración"
+
+#### Para submódulos de MATERIAS PRIMAS:
+1. Agregar al array `children` del grupo `materiasprimas`
+2. Usar prefijo `mp_` en el ID
+3. Mantener orden lógico: Admin → Operaciones → Maestros
+
+#### Para submódulos de CONFIGURACIÓN:
+1. Agregar al array `children` del grupo `settings`  
+2. Usar descripción clara del tipo de configuración
+
+#### Para nuevos GRUPOS:
+1. Agregar antes del grupo "Configuración"
+2. Estructura completa con `children` array
+3. Ícono representativo del área funcional
+
+### Resolución de Rutas
+- **Sistema automático**: `/ruta` → busca `/fxml/ruta.fxml`
+- **Con módulo**: `/modulo_list` → busca `/modulo/fxml/modulo_list.fxml`
+- **Log**: `[DashboardController] navigate received route='/ruta'`
+
+### Estilos CSS del Menú
+- **Sidebar**: `.app-sidebar` (contenedor principal)
+- **Título**: `.sidebar-title` 
+- **Botones**: `.sidebar-button` (elementos principales)
+- **Submenús**: `.sidebar-child` (elementos anidados)
+- **Iconos**: `.sidebar-icon`
+- **Usuario**: `.sidebar-user-name`
+
+## Menú lateral (sidebar)
+- Manifiesto: `src/main/resources/menu-manifest.json`.
+- Grupos colapsables con indicador `+ / −` (fallback emoji `➕ / −`).
+- Estilos en `css/dashboard.css`: `.app-sidebar`, `.sidebar-button`, `.sidebar-child`, `.sidebar-icon`, `.sidebar-user-name`.
+
+## Estándares de API – Cliente Java
+- Rutas preferidas v1 con guiones (ej.: `/api/v1/materias-primas`).
+- Compatibilidad legacy: intentar v1 y, si falla, legacy.
+- `ApiClient` añade `Accept: application/json` y toma `baseUrl` de `config.ini`. En login hay autodetección (https:5001 / http:5000) y actualización del `config.ini`.
+
+## Estándares de API – ASP.NET Core
+- Controllers con rutas base v1 y, si aplica, legacy:
+  - `[Route("api/v1/materias-primas")]` y `[Route("api/materiasprimas")]`.
+- Toggle de estado:
+  - Acepta `PUT` y `PATCH`; rutas `toggle-estado` y `toggle-activo`.
+  - Servicio con `ToggleEstadoAsync(id)` (invierte flag y guarda). Action devuelve `204` o `404`.
+- Update con validación y errores claros:
+  - 400 si faltan requeridos o hay valores inválidos.
+  - 409 para conflictos de BD (única/foránea).
+  - 500 solo para errores inesperados (ProblemDetails con detalle).
+- Normalización de datos: si llega `materiaPrimaOrigenId=0` en `Create/Update`, convertir a `null` (sin origen).
+
+## Materias Primas – Implementación de referencia
+- Lista (DTO real):
+  - Columnas: ID, Nombre, Código Interno, Unidad, Categoría, Origen, Activa (toggle), Stock Actual, Stock Mín, Stock Máx, Costo Unitario, Acciones.
+  - Búsqueda: por nombre, código, categoría y origen.
+  - Exportación: usa `ExportBar`; los campos ajenos al DTO están `@JsonIgnore` en el modelo para no exportarlos.
+- Formulario:
+  - Unidad: ComboBox desde `/api/UnidadesMedida` (muestra `abreviatura - nombre`; envía abreviatura en `unidad`).
+  - Categoría: ComboBox desde `/api/CategoriasMateriaPrima` (muestra `id - nombre`).
+  - Origen: ComboBox con materias existentes; opcional (se envía `null` si no aplica).
+  - Edición: precarga combos; si cargan asíncronos se seleccionan cuando llegan (selección pendiente).
+  - Botón “Crear/Actualizar” con cambio de clase y texto según modo.
+
+## Buenas prácticas
+- Mantener los DTOs del cliente alineados 1:1 con el backend.
+- No exportar campos que no pertenezcan al DTO (usar `@JsonIgnore`).
+- En JavaFX:
+  - `CONSTRAINED_RESIZE_POLICY` en tablas; `prefWidth` por columna.
+  - Buscar con `SearchBar` y reiniciar página a 0 al cambiar filtro.
+  - Insertar `ExportBar` antes del paginador; acciones Editar/Eliminar en columna “Acciones”.
+- En ASP.NET Core:
+  - Validar DTOs y devolver 400; usar 204/404 en toggles; 409 en conflictos; limitar 500 a errores inesperados.
+
+## RESUMEN DE COMPONENTES OBLIGATORIOS
+
+### LISTADO (.fxml + Controller):
+1. ✅ **ExportBar**: En `exportBarContainer`, alineado a la derecha, con callback `() -> service.listAll()`
+2. ✅ **TableView**: Con `CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN`
+3. ✅ **Columnas estándar**: ID (80px), Nombre (200px), Estado (100px), Acciones (150px)
+4. ✅ **SwitchToggleButton**: Para columna estado/activo, 48x26px, clase `cell-switch-btn`
+5. ✅ **Botones de acción**: Editar (`button-yellow`), Eliminar (`button-red`), ambos `btn-small icon-btn`
+6. ✅ **Botón Nuevo**: `button-blue btn-primary icon-btn` + "➕ Nuevo"
+7. ✅ **SearchBar**: Con reinicio de página en cambio de filtro
+8. ✅ **PaginatorControl**: Al final del layout
+9. ✅ **Manejo de errores**: MessageToast para errores de carga/toggle/eliminación
+
+### FORMULARIO (.fxml + Controller):
+1. ✅ **Estructura modal**: BorderPane + modal-accent + modal-header + StackPane
+2. ✅ **Botones obligatorios**: 
+   - Crear: `btn-action-create` (verde)
+   - Actualizar: `btn-action-update` (azul) 
+   - Cancelar: `btn-action-cancel` (rojo)
+3. ✅ **Estados de UI**: Loading (progress + overlay), error (lblError), disable en loading
+4. ✅ **Modo edición**: Cambio de título, texto botón y clase CSS
+5. ✅ **Validación básica**: Campos requeridos con mensajes de error
+6. ✅ **Callback**: `setOnSaved(Runnable)` para recargar listado
+
+### API SERVICE:
+1. ✅ **Métodos estándar**: `listAll()`, `getById()`, `create()`, `update()`, `delete()`, `toggleEstado()`
+2. ✅ **Rutas v1**: Preferir `/api/v1/<modulo-plural>` con fallback a legacy
+3. ✅ **Manejo de errores**: Propagación de excepciones para manejo en UI
+
+### ESTILOS OBLIGATORIOS:
+1. ✅ **Colores de botones**:
+   - Verde: `button-green` (Excel, Crear)
+   - Azul: `button-blue` (CSV, Nuevo, Actualizar)  
+   - Rojo: `button-red` (Eliminar, Cancelar)
+   - Amarillo: `button-yellow` (Editar)
+   - Gris: `button-gray` (TXT)
+   - Morado: `button-purple` (PDF)
+2. ✅ **Utilidades**: `btn-small`, `icon-btn`, `btn-primary`
+3. ✅ **Modal**: `modal-card`, `modal-accent`, `modal-header`
+
+Con esta guía, para cualquier módulo nuevo:
+- Listado = TableView + SearchBar + ExportBar + Paginador + Acciones + Toggle (si aplica)
+- Formulario modal = Estructura estándar + combos desde API + botones con clases globales
+- Endpoints = v1 con guiones + toggles idempotentes + validación consistente + normalización de campos opcionales
+
+## Plantilla de Módulo (copiar/pegar y renombrar)
+
+Sustituir `<modulo>` por el nombre del módulo (snake_case para rutas, camel/pascal para clases) y ajustar DTO/columnas.
+
+1) FXML listado – `src/main/resources/<modulo>/fxml/<modulo>_list.fxml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.tracersoftware.common.controls.PaginatorControl?>
+<?import com.tracersoftware.common.controls.SearchBar?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.<modulo>.controller.<Modulo>ListController">
+    <center>
+        <VBox spacing="8" style="-fx-padding:12;" fillWidth="true">
+            <!-- OBLIGATORIO: Header con título, SearchBar y botón Nuevo -->
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Título del Módulo" style="-fx-font-size:16px; -fx-font-weight:bold;" />
+                <Region HBox.hgrow="ALWAYS" />
+                <SearchBar fx:id="searchBar" />
+                <Button fx:id="btnNuevo" text="Nuevo" />
+            </HBox>
+            
+            <!-- OBLIGATORIO: Contenedor para ExportBar (alineado a la derecha) -->
+            <HBox fx:id="exportBarContainer" spacing="8" alignment="CENTER_RIGHT" />
+            
+            <!-- OBLIGATORIO: Tabla principal con columnas estándar -->
+            <TableView fx:id="table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="ID" fx:id="colId" />
+                    <TableColumn text="Nombre" fx:id="colNombre" />
+                    <!-- Agregar columnas específicas del DTO -->
+                    <TableColumn text="Activo" fx:id="colActivo" />
+                    <TableColumn text="Acciones" fx:id="colAcciones" />
+                </columns>
+            </TableView>
+            
+            <!-- OBLIGATORIO: Paginador al final -->
+            <PaginatorControl fx:id="paginator" />
+        </VBox>
+    </center>
+</BorderPane>
+```
+
+2) Controlador listado – `src/main/java/com/tracersoftware/<modulo>/controller/<Modulo>ListController.java`
+
+```java
+package com.tracersoftware.<modulo>.controller;
+
+import com.tracersoftware.common.controls.MessageToast;
+import com.tracersoftware.common.controls.SwitchToggleButton;
+import com.tracersoftware.<modulo>.api.<Modulo>ApiService;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+public class <Modulo>ListController implements com.tracersoftware.ui.ViewLifecycle {
+    @FXML private TableView<com.tracersoftware.<modulo>.model.<Modulo>Item> table;
+    @FXML private TableColumn<com.tracersoftware.<modulo>.model.<Modulo>Item,Integer> colId;
+    @FXML private TableColumn<com.tracersoftware.<modulo>.model.<Modulo>Item,String> colNombre;
+    @FXML private TableColumn<com.tracersoftware.<modulo>.model.<Modulo>Item,Boolean> colActivo;
+    @FXML private TableColumn<com.tracersoftware.<modulo>.model.<Modulo>Item,Void> colAcciones;
+    @FXML private com.tracersoftware.common.controls.PaginatorControl paginator;
+    @FXML private com.tracersoftware.common.controls.SearchBar searchBar;
+    @FXML private Button btnNuevo;
+    @FXML private javafx.scene.layout.HBox exportBarContainer; // OBLIGATORIO
+
+    private final <Modulo>ApiService service = new <Modulo>ApiService();
+    private final ObservableList<com.tracersoftware.<modulo>.model.<Modulo>Item> data = FXCollections.observableArrayList();
+    private final java.util.List<com.tracersoftware.<modulo>.model.<Modulo>Item> full = new java.util.ArrayList<>();
+
+    @FXML public void initialize() {
+        // OBLIGATORIO: Configuración de tabla
+        if (table != null) {
+            table.setItems(data);
+            table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        }
+        
+        // OBLIGATORIO: Configuración de columnas con anchos estándar
+        if (colId != null) {
+            colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colId.setPrefWidth(80);
+        }
+        if (colNombre != null) {
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            colNombre.setPrefWidth(200);
+        }
+        if (colActivo != null) {
+            colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
+            colActivo.setPrefWidth(100);
+        }
+        if (colAcciones != null) {
+            colAcciones.setPrefWidth(150);
+        }
+        
+        // OBLIGATORIO: Toggle estado con SwitchToggleButton
+        if (colActivo != null) colActivo.setCellFactory(tc -> new TableCell<>() {
+            private final SwitchToggleButton sw = new SwitchToggleButton();
+            private boolean prog = false;
+            {
+                sw.setMinWidth(48); sw.setPrefWidth(48); sw.setMaxWidth(48);
+                sw.setMinHeight(26); sw.setPrefHeight(26); sw.setMaxHeight(26);
+                sw.getStyleClass().add("cell-switch-btn");
+                sw.switchedOnProperty().addListener((o,ov,nv) -> {
+                    if (prog) return;
+                    int idx = getIndex(); 
+                    if (idx < 0 || idx >= getTableView().getItems().size()) return;
+                    var row = getTableView().getItems().get(idx);
+                    boolean ns = Boolean.TRUE.equals(nv);
+                    sw.setDisable(true);
+                    Task<Void> t = new Task<>() { 
+                        @Override protected Void call() throws Exception { 
+                            service.toggleEstado(row.getId(), ns); 
+                            return null; 
+                        } 
+                    };
+                    t.setOnSucceeded(e -> { row.setActivo(ns); sw.setDisable(false); });
+                    t.setOnFailed(e -> { 
+                        sw.setDisable(false); 
+                        prog = true; 
+                        sw.setSelected(!ns); 
+                        prog = false; 
+                        MessageToast.showSystemError(null, "Error al cambiar estado"); 
+                    });
+                    new Thread(t, "<modulo>-toggle").start();
+                });
+            }
+            @Override protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) { setGraphic(null); return; }
+                prog = true; sw.setSelected(Boolean.TRUE.equals(item)); prog = false;
+                setGraphic(sw);
+            }
+        });
+        
+        // OBLIGATORIO: Columna acciones con botones estilizados
+        if (colAcciones != null) colAcciones.setCellFactory(tc -> new TableCell<>() {
+            private final Button btnEdit = new Button("Editar");
+            private final Button btnDel = new Button("Eliminar");
+            private final javafx.scene.layout.HBox box = new javafx.scene.layout.HBox(6, btnEdit, btnDel);
+            { 
+                btnEdit.getStyleClass().addAll("btn-small", "button-yellow", "icon-btn"); 
+                btnDel.getStyleClass().addAll("btn-small", "button-red", "icon-btn");
+                btnEdit.setOnAction(e -> {
+                    int idx = getIndex(); 
+                    if (idx < 0 || idx >= getTableView().getItems().size()) return;
+                    var item = getTableView().getItems().get(idx);
+                    if (item != null) openForm(item);
+                });
+                btnDel.setOnAction(e -> {
+                    int idx = getIndex(); 
+                    if (idx < 0 || idx >= getTableView().getItems().size()) return;
+                    var item = getTableView().getItems().get(idx);
+                    if (item != null) deleteItem(item);
+                });
+            }
+            @Override protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty); 
+                setGraphic(empty ? null : box);
+            }
+        });
+        
+        // OBLIGATORIO: ExportBar en contenedor dedicado
+        if (exportBarContainer != null) {
+            com.tracersoftware.common.controls.ExportBar exportBar = 
+                new com.tracersoftware.common.controls.ExportBar(table, "<modulo>", () -> service.listAll());
+            javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+            javafx.scene.layout.HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+            exportBarContainer.getChildren().addAll(spacer, exportBar);
+        }
+        
+        // OBLIGATORIO: Búsqueda y paginación
+        if (searchBar != null) searchBar.textProperty().addListener((o,ov,nv) -> { 
+            if (paginator != null) paginator.setPageIndex(0); 
+            applyPage(); 
+        });
+        if (paginator != null) { 
+            paginator.pageIndexProperty().addListener((o,ov,nv) -> applyPage()); 
+            paginator.pageSizeProperty().addListener((o,ov,nv) -> applyPage()); 
+        }
+        
+        // OBLIGATORIO: Botón nuevo con estilos estándar
+        if (btnNuevo != null) {
+            btnNuevo.getStyleClass().addAll("button-blue", "btn-primary", "icon-btn"); 
+            btnNuevo.setText("➕ Nuevo");
+            btnNuevo.setOnAction(e -> openForm(null));
+        }
+    }
+
+    @Override public void onViewShown() { load(); }
+    
+    private void load() {
+        Task<java.util.List<com.tracersoftware.<modulo>.model.<Modulo>Item>> t = new Task<>() { 
+            @Override protected java.util.List<com.tracersoftware.<modulo>.model.<Modulo>Item> call() throws Exception { 
+                return service.listAll(); 
+            } 
+        };
+        t.setOnSucceeded(e -> { 
+            full.clear(); 
+            if (t.getValue() != null) full.addAll(t.getValue()); 
+            applyPage(); 
+        });
+        t.setOnFailed(e -> {
+            MessageToast.showSystemError(null, "Error cargando datos: " + 
+                (t.getException() == null ? "" : t.getException().getMessage()));
+        });
+        new Thread(t, "<modulo>-load").start();
+    }
+    
+    private void applyPage() {
+        String q = searchBar != null && searchBar.getText() != null ? 
+                   searchBar.getText().trim().toLowerCase() : "";
+        java.util.List<com.tracersoftware.<modulo>.model.<Modulo>Item> filtered = new java.util.ArrayList<>();
+        for (var it : full) { 
+            if (q.isEmpty() || (it.getNombre() + " " + it.getId()).toLowerCase().contains(q)) 
+                filtered.add(it); 
+        }
+        int page = paginator != null ? paginator.getPageIndex() : 0;
+        int size = paginator != null ? paginator.getPageSize() : Math.max(1, filtered.size());
+        int total = filtered.size(); 
+        int from = Math.max(0, Math.min(page * size, total)); 
+        int to = Math.max(from, Math.min(from + size, total));
+        data.setAll(filtered.subList(from, to));
+        if (paginator != null) paginator.setTotalItems(total);
+    }
+    
+    private void deleteItem(com.tracersoftware.<modulo>.model.<Modulo>Item item) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar eliminación");
+        alert.setHeaderText("¿Está seguro de eliminar este registro?");
+        alert.setContentText("Nombre: " + item.getNombre());
+        
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                Task<Void> deleteTask = new Task<>() {
+                    @Override protected Void call() throws Exception {
+                        service.delete(item.getId());
+                        return null;
+                    }
+                };
+                deleteTask.setOnSucceeded(e -> {
+                    MessageToast.show(null, "Registro eliminado exitosamente", MessageToast.ToastType.SUCCESS);
+                    load();
+                });
+                deleteTask.setOnFailed(e -> {
+                    MessageToast.showSystemError(null, "Error al eliminar: " + 
+                        (deleteTask.getException() == null ? "" : deleteTask.getException().getMessage()));
+                });
+                new Thread(deleteTask, "<modulo>-delete").start();
+            }
+        });
+    }
+    
+    private void openForm(com.tracersoftware.<modulo>.model.<Modulo>Item item) {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                getClass().getResource("/<modulo>/fxml/<modulo>_form.fxml"));
+            Parent root = loader.load();
+            var controller = loader.getController();
+            
+            // OBLIGATORIO: Establecer callback para actualización automática
+            controller.setOnSaved(this::load);
+            
+            // Configurar modo según si es creación o edición
+            if (item != null) {
+                controller.edit(item);
+            } else {
+                controller.create();
+            }
+            
+            com.tracersoftware.common.ui.ModalUtils.showModalAndWait(
+                null, root, item == null ? "Nuevo" : "Editar");
+        } catch (Exception ex) { 
+            MessageToast.showSystemError(null, "No se pudo abrir el formulario: " + ex.getMessage()); 
+        }
+    }
+}
+```
+
+3) FXML formulario – `src/main/resources/<modulo>/fxml/<modulo>_form.fxml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.<modulo>.controller.<Modulo>FormController" styleClass="modal-card">
+    <!-- OBLIGATORIO: Barra superior para drag del modal -->
+    <top>
+        <Pane minHeight="15" prefHeight="15" maxHeight="15" styleClass="modal-accent" />
+    </top>
+    <center>
+        <VBox spacing="4">
+            <!-- OBLIGATORIO: Header del modal -->
+            <HBox styleClass="modal-header">
+                <Label fx:id="lblTitle" text="Nuevo" />
+            </HBox>
+            <StackPane>
+                <!-- OBLIGATORIO: Grid principal con campos -->
+                <GridPane hgap="10" vgap="10">
+                    <padding>
+                        <Insets top="14" right="14" bottom="14" left="14" />
+                    </padding>
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="110" prefWidth="120" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="240" prefWidth="300" />
+                    </columnConstraints>
+                    
+                    <!-- Campos específicos del módulo -->
+                    <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                    <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300" />
+                    
+                    <Label text="Activo:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                    <CheckBox fx:id="chkActivo" GridPane.rowIndex="1" GridPane.columnIndex="1" selected="true" />
+                    
+                    <!-- OBLIGATORIO: Label de error -->
+                    <Label fx:id="lblError" textFill="red" wrapText="true" visible="false" managed="false" 
+                           GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2" />
+                    
+                    <!-- OBLIGATORIO: Botones con estilos estándar -->
+                    <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="9" GridPane.columnIndex="1">
+                        <ProgressIndicator fx:id="progress" prefWidth="20" prefHeight="20" visible="false" />
+                        <Button fx:id="btnSave" text="Crear" styleClass="btn-action-create" />
+                        <Button fx:id="btnCancel" text="Cancelar" styleClass="btn-action-cancel" />
+                    </HBox>
+                </GridPane>
+                
+                <!-- OBLIGATORIO: Overlay para loading -->
+                <AnchorPane fx:id="overlay" visible="false" pickOnBounds="false" 
+                           style="-fx-background-color: rgba(0,0,0,0.35);">
+                    <children>
+                        <ProgressIndicator fx:id="overlayProgress" prefWidth="64" prefHeight="64" 
+                                         AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                                         AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" />
+                    </children>
+                </AnchorPane>
+            </StackPane>
+        </VBox>
+    </center>
+</BorderPane>
+```
+
+4) Controlador formulario – `src/main/java/com/tracersoftware/<modulo>/controller/<Modulo>FormController.java`
+
+```java
+package com.tracersoftware.<modulo>.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.tracersoftware.common.controls.MessageToast;
+import com.tracersoftware.<modulo>.api.<Modulo>ApiService;
+import com.tracersoftware.<modulo>.model.<Modulo>Item;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+
+public class <Modulo>FormController {
+    @FXML private Label lblTitle;
+    @FXML private TextField txtNombre;
+    @FXML private CheckBox chkActivo;
+    @FXML private Label lblError;
+    @FXML private ProgressIndicator progress;
+    @FXML private Button btnSave;
+    @FXML private Button btnCancel;
+    @FXML private AnchorPane overlay;
+    @FXML private ProgressIndicator overlayProgress;
+
+    private final <Modulo>ApiService service = new <Modulo>ApiService();
+    private final ObjectMapper mapper = new ObjectMapper();
+    private boolean isEdit = false;
+    private <Modulo>Item currentItem;
+    private Runnable onSaved;
+
+    @FXML public void initialize() {
+        // OBLIGATORIO: Configuración de botones
+        btnCancel.setOnAction(e -> closeModal());
+        btnSave.setOnAction(e -> save());
+        
+        // OBLIGATORIO: Configuración inicial de elementos
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+        progress.setVisible(false);
+        overlay.setVisible(false);
+    }
+
+    public void setOnSaved(Runnable callback) {
+        this.onSaved = callback;
+    }
+
+    // OBLIGATORIO: Método para modo edición
+    public void edit(<Modulo>Item item) {
+        this.isEdit = true;
+        this.currentItem = item;
+        
+        // OBLIGATORIO: Cambiar estilos y texto del botón
+        lblTitle.setText("Editar");
+        btnSave.setText("Actualizar");
+        btnSave.getStyleClass().removeAll("btn-action-create");
+        btnSave.getStyleClass().add("btn-action-update");
+        
+        // Cargar datos en los campos
+        txtNombre.setText(item.getNombre());
+        chkActivo.setSelected(item.isActivo());
+    }
+
+    private void save() {
+        // OBLIGATORIO: Validación básica
+        String nombre = txtNombre.getText();
+        if (nombre == null || nombre.trim().isEmpty()) {
+            showError("El nombre es obligatorio");
+            return;
+        }
+
+        // OBLIGATORIO: Mostrar loading
+        showLoading(true);
+        hideError();
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                ObjectNode body = mapper.createObjectNode();
+                body.put("nombre", nombre.trim());
+                body.put("activo", chkActivo.isSelected());
+                
+                if (isEdit && currentItem != null) {
+                    service.update(currentItem.getId(), body);
+                } else {
+                    service.create(body);
+                }
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
+                showLoading(false);
+                MessageToast.show(null, 
+                    isEdit ? "Registro actualizado exitosamente" : "Registro creado exitosamente", 
+                    MessageToast.ToastType.SUCCESS);
+                if (onSaved != null) onSaved.run();
+                closeModal();
+            });
+        });
+
+        task.setOnFailed(e -> {
+            Platform.runLater(() -> {
+                showLoading(false);
+                Throwable ex = task.getException();
+                String errorMsg = ex != null ? ex.getMessage() : "Error desconocido";
+                showError("Error al guardar: " + errorMsg);
+            });
+        });
+
+        new Thread(task, "<modulo>-save").start();
+    }
+
+    // OBLIGATORIO: Métodos de utilidad para UI
+    private void showError(String message) {
+        lblError.setText(message);
+        lblError.setVisible(true);
+        lblError.setManaged(true);
+    }
+
+    private void hideError() {
+        lblError.setVisible(false);
+        lblError.setManaged(false);
+    }
+
+    private void showLoading(boolean show) {
+        progress.setVisible(show);
+        overlay.setVisible(show);
+        btnSave.setDisable(show);
+        btnCancel.setDisable(show);
+    }
+
+    private void closeModal() {
+        Stage stage = (Stage) btnCancel.getScene().getWindow();
+        stage.close();
+    }
+}
+```
+
+4) Servicio cliente Java – `src/main/java/com/tracersoftware/<modulo>/api/<Modulo>ApiService.java`
+
+```
+package com.tracersoftware.<modulo>.api;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.tracersoftware.api.ApiClient;
+import java.io.IOException; import java.util.List; import java.util.ArrayList;
+
+public class <Modulo>ApiService {
+    private final ApiClient api = new ApiClient();
+    public List<com.tracersoftware.<modulo>.model.<Modulo>Item> listAll() throws Exception {
+        JsonNode root = api.getJson("/api/v1/<modulo-plural>");
+        List<com.tracersoftware.<modulo>.model.<Modulo>Item> out = new ArrayList<>();
+        if (root!=null && root.isArray()) for (JsonNode n: root) { /* mapear */ }
+        return out;
+    }
+    public JsonNode getById(int id) throws Exception { return api.getJson("/api/v1/<modulo-plural>/"+id); }
+    public JsonNode create(JsonNode body) throws Exception { return api.postJson("/api/v1/<modulo-plural>", body.toString()); }
+    public JsonNode update(int id, JsonNode body) throws Exception { return api.putJson("/api/v1/<modulo-plural>/"+id, body.toString()); }
+    public void delete(int id) throws Exception { api.deleteJson("/api/v1/<modulo-plural>/"+id); }
+    public JsonNode toggleEstado(int id, boolean activo) throws Exception {
+        com.fasterxml.jackson.databind.node.ObjectNode b = new com.fasterxml.jackson.databind.ObjectMapper().createObjectNode();
+        b.put("activo", activo); return api.putJson("/api/v1/<modulo-plural>/"+id+"/toggle-estado", b.toString());
+    }
+}
+```
+
+5) Backend (ASP.NET Core) – Controller de referencia
+
+```
+[ApiController]
+[Route("api/v1/<modulo-plural>")]
+[Route("api/<modulo-legacy>")] // opcional compatibilidad
+public class <ModuloPlural>Controller : ControllerBase {
+    private readonly I<Modulo>Service _service;
+    public <ModuloPlural>Controller(I<Modulo>Service service){ _service = service; }
+
+    [HttpGet] public Task<List<<Modulo>DTO>> GetAll() => _service.GetAllAsync();
+    [HttpGet("{id}")] public async Task<ActionResult<<Modulo>DTO>> GetById(int id){ var r=await _service.GetByIdAsync(id); return r==null?NotFound():r; }
+    [HttpPost] public async Task<ActionResult<<Modulo>DTO>> Create([FromBody] <Modulo>CreateDTO dto){ var c=await _service.CreateAsync(dto); return CreatedAtAction(nameof(GetById), new { id=c.Id }, c); }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] <Modulo>CreateDTO dto){ /* validar dto */ var ok=await _service.UpdateAsync(id,dto); return ok?NoContent():NotFound(); }
+    [HttpDelete("{id}")] public async Task<IActionResult> Delete(int id){ var ok=await _service.DeleteAsync(id); return ok?NoContent():NotFound(); }
+    [HttpPut("{id}/toggle-estado")][HttpPatch("{id}/toggle-estado")][HttpPut("{id}/toggle-activo")]
+    public async Task<IActionResult> ToggleEstado(int id){ var ok=await _service.ToggleEstadoAsync(id); return ok?NoContent():NotFound(); }
+}
+```

@@ -5,10 +5,12 @@
 }
 
 .app-sidebar {
-    -fx-background-color: #1f2a36;
+    -fx-background-color: #ffffff;
     -fx-padding: 18 12 18 12;
     -fx-min-width: 220px;
     -fx-max-width: 260px;
+    -fx-border-color: rgba(0,0,0,0.06);
+    -fx-border-width: 0 1 0 0;
 }
 
 .brand {
@@ -27,7 +29,7 @@
 
 .sidebar-button {
     -fx-background-color: transparent;
-    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-text-fill: #2f3b47;
     -fx-font-size: 13px;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 10 12 10 12;
@@ -35,22 +37,24 @@
 }
 
 .sidebar-button:hover {
-    -fx-background-color: rgba(255,255,255,0.03);
+    -fx-background-color: rgba(0,0,0,0.04);
 }
 
 .sidebar-button.active {
-    -fx-background-color: linear-gradient(to right, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    -fx-background-color: linear-gradient(to right, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
 }
 
 .sidebar-icon {
     -fx-font-size: 14px;
-    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-text-fill: #2f3b47;
 }
 
 .sidebar-child {
     -fx-padding: 6 24 6 24;
     -fx-font-size: 12px;
-    -fx-text-fill: rgba(255,255,255,0.78);
+    -fx-text-fill: #4b5966;
+    -fx-background-color: #f5f7fa;
+    -fx-background-radius: 6;
 }
 
 .menu-button:hover {
@@ -120,7 +124,7 @@
 }
 
 .sidebar-user-name {
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #2f3b47;
     -fx-font-size: 13px;
     -fx-padding: 8 0 18 0;
 }

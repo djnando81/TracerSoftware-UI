@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.proveedores.controller.SelectorMateriaPrimaModalController" styleClass="modal-card">
+    <top>
+        <Pane minHeight="15" prefHeight="15" maxHeight="15" styleClass="modal-accent" />
+    </top>
+    <center>
+        <VBox spacing="4">
+            <HBox styleClass="modal-header">
+                <Label fx:id="lblTitle" text="Seleccionar Materia Prima" />
+            </HBox>
+            <StackPane>
+                <VBox spacing="10">
+                    <padding>
+                        <Insets top="14" right="14" bottom="14" left="14" />
+                    </padding>
+                    
+                    <!-- Campo de búsqueda -->
+                    <VBox spacing="5">
+                        <Label text="Buscar:" />
+                        <TextField fx:id="txtBuscar" promptText="Escriba para filtrar materias primas..." />
+                    </VBox>
+                    
+                    <!-- Lista de materias primas disponibles -->
+                    <VBox spacing="5">
+                        <Label text="Materias primas disponibles:" />
+                        <ListView fx:id="listMateriasPrimas" prefHeight="300" prefWidth="400">
+                            <!-- Lista se poblará dinámicamente -->
+                        </ListView>
+                        <Label fx:id="lblCount" text="0 materias primas disponibles" styleClass="help-text" />
+                    </VBox>
+                    
+                    <!-- Error y botones -->
+                    <Label fx:id="lblError" textFill="red" wrapText="true" visible="false" managed="false" />
+                    
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <ProgressIndicator fx:id="progress" prefWidth="20" prefHeight="20" visible="false" />
+                        <Button fx:id="btnSelect" text="Seleccionar" styleClass="btn-action-create" />
+                        <Button fx:id="btnCancel" text="Cancelar" styleClass="btn-action-cancel" />
+                    </HBox>
+                </VBox>
+                <AnchorPane fx:id="overlay" visible="false" pickOnBounds="false" style="-fx-background-color: rgba(0,0,0,0.35);">
+                    <children><ProgressIndicator fx:id="overlayProgress" prefWidth="64" prefHeight="64" /></children>
+                </AnchorPane>
+            </StackPane>
+        </VBox>
+    </center>
+</BorderPane>

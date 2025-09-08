@@ -1,23 +1,36 @@
 package com.tracersoftware.ui.menu;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.stage.Window;
-import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import org.kordamp.ikonli.javafx.FontIcon;
-
-import java.util.function.Consumer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.function.Consumer;
+
 import com.tracersoftware.common.controls.MessageToast;
 import com.tracersoftware.common.controls.MessageToast.ToastType;
 
 public class MenuBarBuilder {
+    /**
+     * Safely creates a FontIcon; returns null if icon lib not available.
+     */
+    private FontIcon safeIcon(String literal) {
+        try {
+            return new FontIcon(literal);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
     /**
      * Builds a VBox acting as a sidebar menu from the manifest.
@@ -61,12 +74,12 @@ public class MenuBarBuilder {
                 userBox.getChildren().addAll(iv, user);
             } catch (Exception ex) {
                 // fallback to initials
-                Label initials = new Label(display != null && !display.isEmpty() ? display.substring(0,1).toUpperCase() : "U");
+                Label initials = new Label(display != null && !display.isEmpty() ? display.substring(0, 1).toUpperCase() : "U");
                 initials.getStyleClass().add("sidebar-avatar");
                 userBox.getChildren().addAll(initials, user);
             }
         } else {
-            Label initials = new Label(display != null && !display.isEmpty() ? display.substring(0,1).toUpperCase() : "U");
+            Label initials = new Label(display != null && !display.isEmpty() ? display.substring(0, 1).toUpperCase() : "U");
             initials.getStyleClass().add("sidebar-avatar");
             userBox.getChildren().addAll(initials, user);
         }
@@ -91,53 +104,53 @@ public class MenuBarBuilder {
     private Node buildItem(MenuModel.MenuItem item, Consumer<String> navigate, Consumer<String> action) {
         String labelText = item.getLabel() == null ? "?" : item.getLabel();
         String iconText = item.getIcon() == null ? "" : item.getIcon();
-    Button b = new Button(labelText);
-        b.getStyleClass().add("sidebar-button");
-        // if iconText looks like a font icon key (contains '-') use FontIcon, otherwise render text/emoji
-        if (!iconText.isEmpty() && iconText.contains("-")) {
-            try {
-                FontIcon fi = new FontIcon(iconText);
-                fi.getStyleClass().add("sidebar-icon");
-                b.setGraphic(fi);
-            } catch (Exception ex) {
-                // Fallback: don't break UI load — show a small plain label instead
-                Label fallback = new Label("•");
-                fallback.getStyleClass().add("sidebar-icon");
-                b.setGraphic(fallback);
-            }
-        } else if (!iconText.isEmpty()) {
-            b.setText(iconText + "  " + labelText);
-        }
-    // expose id and route for external navigation/active tracking
-    if (item.getId() != null) b.setId("menu-" + item.getId());
-    if (item.getRoute() != null) {
-        String ud = item.getRoute().startsWith("/") ? item.getRoute().substring(1) : item.getRoute();
-        b.setUserData(ud);
-    }
-        b.getStyleClass().add("sidebar-button");
-        b.setMaxWidth(Double.MAX_VALUE);
-        if (item.getRoute() != null && navigate != null) {
-            String routeNormalized = item.getRoute().startsWith("/") ? item.getRoute().substring(1) : item.getRoute();
-            b.setOnAction(evt -> {
-                System.out.println("[MenuBarBuilder] clicked route='" + routeNormalized + "' (id=" + item.getId() + ")");
-                // Determine owner window from event source so the popup is attached to the app window when possible
-                try {
-                    Window w = ((Node) evt.getSource()).getScene().getWindow();
-                    if (w instanceof Stage) MessageToast.show((Stage) w, "Ir a: " + routeNormalized, ToastType.INFO);
-                    else MessageToast.show(null, "Ir a: " + routeNormalized, ToastType.INFO);
-                } catch (Exception ignored) {
-                    try { MessageToast.show(null, "Ir a: " + routeNormalized, ToastType.INFO); } catch (Exception ignored2) {}
-                }
-                navigate.accept(routeNormalized);
-            });
-        } else if (item.getAction() != null && action != null) {
-            b.setOnAction(evt -> action.accept(item.getAction()));
-        }
 
-        // If there are children, create indented nodes (simple rendering)
+        Button b = new Button(labelText);
+        b.getStyleClass().add("sidebar-button");
+
+        // If there are children, render a collapsible group (with a + toggle on the right)
         if (item.getChildren() != null && !item.getChildren().isEmpty()) {
             VBox box = new VBox();
-            box.getChildren().add(b);
+
+            // Build header: icon + label + spacer + +/− icon
+            HBox header = new HBox();
+            header.setAlignment(Pos.CENTER_LEFT);
+            header.setSpacing(8);
+
+            // left icon for parent
+            if (!iconText.isEmpty()) {
+                if (iconText.contains("-")) {
+                    try {
+                        FontIcon fi = new FontIcon(iconText);
+                        fi.getStyleClass().add("sidebar-icon");
+                        header.getChildren().add(fi);
+                    } catch (Exception ex) {
+                        Label fallback = new Label("+");
+                        fallback.getStyleClass().add("sidebar-icon");
+                        header.getChildren().add(fallback);
+                    }
+                } else {
+                    header.getChildren().add(new Label(iconText));
+                }
+            }
+            header.getChildren().add(new Label(labelText));
+
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            header.getChildren().add(spacer);
+
+            final FontIcon toggleIcon = safeIcon("fa5s-plus");
+            final Label toggleFallback = toggleIcon == null ? new Label("➕") : null;
+            if (toggleIcon != null) header.getChildren().add(toggleIcon); else header.getChildren().add(toggleFallback);
+
+            b.setText(null);
+            b.setGraphic(header);
+            b.setMaxWidth(Double.MAX_VALUE);
+
+            VBox childBox = new VBox();
+            childBox.setVisible(false);
+            childBox.setManaged(false);
+
             for (MenuModel.MenuItem child : item.getChildren()) {
                 Button cb = new Button(child.getLabel() == null ? "?" : child.getLabel());
                 if (child.getIcon() != null && child.getIcon().contains("-")) {
@@ -173,11 +186,63 @@ public class MenuBarBuilder {
                         }
                         navigate.accept(childRouteNormalized);
                     });
+                } else if (child.getAction() != null && action != null) {
+                    cb.setOnAction(evt -> action.accept(child.getAction()));
                 }
-                else if (child.getAction() != null && action != null) cb.setOnAction(evt -> action.accept(child.getAction()));
-                box.getChildren().add(cb);
+                childBox.getChildren().add(cb);
             }
+
+            b.setOnAction(evt -> {
+                boolean show = !childBox.isVisible();
+                childBox.setVisible(show);
+                childBox.setManaged(show);
+                if (toggleIcon != null) {
+                    try { toggleIcon.setIconLiteral(show ? "fa5s-minus" : "fa5s-plus"); } catch (Exception ignored) {}
+                } else if (toggleFallback != null) {
+                    toggleFallback.setText(show ? "−" : "➕");
+                }
+            });
+
+            box.getChildren().addAll(b, childBox);
             return box;
+        }
+
+        // No children: standard button rendering
+        if (!iconText.isEmpty() && iconText.contains("-")) {
+            try {
+                FontIcon fi = new FontIcon(iconText);
+                fi.getStyleClass().add("sidebar-icon");
+                b.setGraphic(fi);
+            } catch (Exception ex) {
+                Label fallback = new Label("•");
+                fallback.getStyleClass().add("sidebar-icon");
+                b.setGraphic(fallback);
+            }
+        } else if (!iconText.isEmpty()) {
+            b.setText(iconText + "  " + labelText);
+        }
+
+        if (item.getId() != null) b.setId("menu-" + item.getId());
+        if (item.getRoute() != null) {
+            String ud = item.getRoute().startsWith("/") ? item.getRoute().substring(1) : item.getRoute();
+            b.setUserData(ud);
+        }
+        b.setMaxWidth(Double.MAX_VALUE);
+        if (item.getRoute() != null && navigate != null) {
+            String routeNormalized = item.getRoute().startsWith("/") ? item.getRoute().substring(1) : item.getRoute();
+            b.setOnAction(evt -> {
+                System.out.println("[MenuBarBuilder] clicked route='" + routeNormalized + "' (id=" + item.getId() + ")");
+                try {
+                    Window w = ((Node) evt.getSource()).getScene().getWindow();
+                    if (w instanceof Stage) MessageToast.show((Stage) w, "Ir a: " + routeNormalized, ToastType.INFO);
+                    else MessageToast.show(null, "Ir a: " + routeNormalized, ToastType.INFO);
+                } catch (Exception ignored) {
+                    try { MessageToast.show(null, "Ir a: " + routeNormalized, ToastType.INFO); } catch (Exception ignored2) {}
+                }
+                navigate.accept(routeNormalized);
+            });
+        } else if (item.getAction() != null && action != null) {
+            b.setOnAction(evt -> action.accept(item.getAction()));
         }
 
         return b;

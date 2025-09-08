@@ -82,6 +82,7 @@ public class ApiClient {
     HttpRequest.Builder rb = HttpRequest.newBuilder()
         .uri(URI.create(target))
         .timeout(Duration.ofSeconds(8))
+        .header("Accept", "application/json")
         .GET();
     // Prefer sanitized token from auth.SessionManager, fallback to persisted TokenStore access token
     String token = null;
@@ -188,12 +189,61 @@ public class ApiClient {
         }
     }
 
+    // Binary POST: returns response bytes (for file downloads)
+    public byte[] postBinary(String path, String jsonPayload) throws IOException, InterruptedException, UnauthorizedException {
+        String target = path.startsWith("http") ? path : normalizeUrl(baseUrl, path);
+        HttpRequest.Builder rb = HttpRequest.newBuilder()
+                .uri(URI.create(target))
+                .timeout(Duration.ofSeconds(20))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload == null ? "[]" : jsonPayload));
+        String token2 = null;
+        try { token2 = SessionManager.get().getBearerTokenSanitized().orElse(null); } catch (Exception ignore) {}
+        if (token2 == null || token2.isEmpty()) {
+            try { String k2 = TokenStore.loadAccessToken(); if (k2 != null && !k2.isBlank()) token2 = k2.trim(); } catch (Exception ignore) {}
+        }
+        if (token2 != null) token2 = token2.trim();
+        if (token2 != null && (token2.equalsIgnoreCase("refreshToken") || token2.split("\\.").length != 3)) {
+            try { String k2 = TokenStore.loadAccessToken(); if (k2 != null && !k2.isBlank()) token2 = k2.trim(); else token2 = null; } catch (Exception ignore) { token2 = null; }
+        }
+        try {
+            String authHeader2 = (token2 != null && !token2.isEmpty()) ? "Bearer " + token2 : "(none)";
+            Path dbg2 = Paths.get("debug_auth.log");
+            String line2 = java.time.ZonedDateTime.now().toString() + " | POSTBIN " + target + " | Authorization: " + authHeader2 + System.lineSeparator();
+            java.nio.file.Files.write(dbg2, line2.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (Exception ignored) {}
+        if (token2 != null && !token2.isEmpty()) rb.header("Authorization", "Bearer " + token2);
+        HttpRequest req = rb.build();
+        logRequest(req);
+        HttpResponse<byte[]> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofByteArray());
+        logResponse(resp);
+        if (isRedirect(resp.statusCode())) {
+            throw new IOException("Unexpected redirect (" + resp.statusCode() + ") from " + target + ". Use correct baseUrl (HTTPS).");
+        }
+        if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+            return resp.body() == null ? new byte[0] : resp.body();
+        } else {
+            try {
+                Path dbg = Paths.get("debug_auth.log");
+                String line = java.time.ZonedDateTime.now().toString() + " | RESPONSE " + resp.statusCode() + " " + target + " | BodyBytes: " + (resp.body() == null ? 0 : resp.body().length) + System.lineSeparator();
+                java.nio.file.Files.write(dbg, line.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            } catch (Exception ignored) {}
+            if (resp.statusCode() == 401) {
+                String www = resp.headers().firstValue("WWW-Authenticate").orElse("");
+                throw new UnauthorizedException("HTTP 401 from " + target + (www.isBlank() ? "" : (" | " + www)));
+            }
+            throw new IOException("HTTP " + resp.statusCode() + " from " + target);
+        }
+    }
+
         public JsonNode putJson(String path, String jsonPayload) throws IOException, InterruptedException, UnauthorizedException {
             String target = path.startsWith("http") ? path : normalizeUrl(baseUrl, path);
             HttpRequest.Builder rb = HttpRequest.newBuilder()
                     .uri(URI.create(target))
                     .timeout(Duration.ofSeconds(10))
                     .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
                     .PUT(HttpRequest.BodyPublishers.ofString(jsonPayload));
             String token2 = null;
             try { token2 = SessionManager.get().getBearerTokenSanitized().orElse(null); } catch (Exception ignore) {}

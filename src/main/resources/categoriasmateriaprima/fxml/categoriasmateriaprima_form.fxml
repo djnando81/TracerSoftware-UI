@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.categoriasmateriaprima.controller.CategoriaMateriaPrimaFormController" styleClass="modal-card">
+    <top>
+        <Pane minHeight="15" prefHeight="15" maxHeight="15" styleClass="modal-accent" />
+    </top>
+    <center>
+        <VBox spacing="4">
+            <HBox styleClass="modal-header">
+                <Label fx:id="lblTitle" text="Nueva Categoría" />
+            </HBox>
+            <StackPane>
+                <GridPane hgap="10" vgap="10">
+                    <padding>
+                        <Insets top="14" right="14" bottom="14" left="14" />
+                    </padding>
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="110" prefWidth="120" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="240" prefWidth="300" />
+                    </columnConstraints>
+                    <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                    <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300" />
+                    <Label text="Activa:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                    <CheckBox fx:id="chkActiva" GridPane.rowIndex="1" GridPane.columnIndex="1" selected="true" />
+                    <Label fx:id="lblError" textFill="red" wrapText="true" visible="false" managed="false" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2" />
+                    <HBox spacing="10" alignment="CENTER_RIGHT" GridPane.rowIndex="9" GridPane.columnIndex="1">
+                        <ProgressIndicator fx:id="progress" prefWidth="20" prefHeight="20" visible="false" />
+                        <Button fx:id="btnSave" text="Crear" styleClass="btn-action-create" />
+                        <Button fx:id="btnCancel" text="Cancelar" styleClass="btn-action-cancel" />
+                    </HBox>
+                </GridPane>
+                <AnchorPane fx:id="overlay" visible="false" pickOnBounds="false" style="-fx-background-color: rgba(0,0,0,0.35);">
+                    <children><ProgressIndicator fx:id="overlayProgress" prefWidth="64" prefHeight="64" /></children>
+                </AnchorPane>
+            </StackPane>
+        </VBox>
+    </center>
+</BorderPane>
+

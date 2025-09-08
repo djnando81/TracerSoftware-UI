@@ -52,7 +52,7 @@
 
 /* Overlay shown during API call */
 .toggle-overlay {
-    -fx-background-color: rgba(255,255,255,0.6); /* semi-transparent white */
+    -fx-background-color: rgba(57, 243, 0, 0.6); /* semi-transparent white */
     -fx-background-radius: 6px;
 }
 

@@ -1,0 +1,21 @@
+/* Generic modal card look + accent bar for undecorated dialogs */
+.modal-card {
+    -fx-background-color: white;
+    -fx-background-radius: 0;
+    -fx-padding: 0; /* content containers add their own padding */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 18, 0.12, 0, 4);
+}
+
+.modal-accent {
+    -fx-background-color: #1f2a36; /* match dashboard primary */
+    -fx-background-radius: 0 0 0 0; /* rounded top corners */
+}
+
+.modal-header {
+    -fx-padding: 10 14 6 14;
+    -fx-background-color: transparent;
+}
+.modal-header .label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #263238; /* dark slate */
+}

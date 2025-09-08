@@ -38,6 +38,8 @@ public class UsuariosListController implements ViewLifecycle {
     @FXML private Label lblError;
     @FXML private javafx.scene.layout.Pane rowOverlayPane;
     @FXML private com.tracersoftware.common.controls.PaginatorControl paginator;
+    @FXML private com.tracersoftware.common.controls.SearchBar searchBar; // OBLIGATORIO
+    @FXML private javafx.scene.layout.HBox exportBarContainer; // OBLIGATORIO
 
     private final UsuariosApiService service = new UsuariosApiService();
     private final RolesApiService rolesService = new RolesApiService();
@@ -79,13 +81,51 @@ public class UsuariosListController implements ViewLifecycle {
             } catch (Exception ignored) {}
         });
         new Thread(rolesPreloadTask, "roles-preload").start();
+        // Make table fill width and size columns proportionally
+        try { tableUsers.setColumnResizePolicy(javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY); } catch (Exception ignored) {}
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-    colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
+        colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
-        // ensure visible width for the switch control
-        try { colActivo.setMinWidth(80); colActivo.setPrefWidth(90); } catch (Exception ignored) {}
+        // column sizing hints (constrained policy will scale respecting these prefs)
+        try {
+            colId.setMinWidth(60); colId.setMaxWidth(90); colId.setPrefWidth(70);
+            colNombre.setPrefWidth(220);
+            colRol.setPrefWidth(140);
+            colEmail.setPrefWidth(320);
+            colActivo.setMinWidth(80); colActivo.setPrefWidth(100); colActivo.setMaxWidth(120);
+            colEdit.setMinWidth(160); colEdit.setPrefWidth(180); colEdit.setMaxWidth(220);
+        } catch (Exception ignored) {}
+
+        // OBLIGATORIO: Configuración de ExportBar usando el contenedor del FXML
+        if (exportBarContainer != null) {
+            java.util.concurrent.Callable<java.util.List<?>> fetchAll = () -> {
+                int page = 0;
+                int size = 500;
+                java.util.List<com.fasterxml.jackson.databind.JsonNode> all = new java.util.ArrayList<>();
+                while (true) {
+                    com.tracersoftware.usuarios.api.PagedResult pr = service.listUsersPaged(page, size);
+                    all.addAll(pr.getItems());
+                    page++;
+                    if (page >= pr.getTotalPages()) break;
+                }
+                return new java.util.ArrayList<>(all);
+            };
+            com.tracersoftware.common.controls.ExportBar exportBar = new com.tracersoftware.common.controls.ExportBar(tableUsers, "usuarios", fetchAll);
+            javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+            javafx.scene.layout.HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+            exportBarContainer.getChildren().addAll(spacer, exportBar);
+        }
+        
+        // OBLIGATORIO: Configuración de SearchBar
+        if (searchBar != null) {
+            searchBar.textProperty().addListener((o, ov, nv) -> {
+                // Implementar búsqueda en el futuro - por ahora solo reload
+                if (paginator != null) paginator.setPageIndex(0);
+                loadData();
+            });
+        }
         // use reusable ActiveToggleControl for the activo column
         colActivo.setCellFactory(tc -> new javafx.scene.control.TableCell<UsuarioDTO, Boolean>() {
             private final com.tracersoftware.common.controls.SwitchToggleButton switchBtn = new com.tracersoftware.common.controls.SwitchToggleButton();
@@ -353,7 +393,7 @@ public class UsuariosListController implements ViewLifecycle {
     // make actions column narrow and fixed
     try { colEdit.setPrefWidth(140); colEdit.setMaxWidth(140); colEdit.setMinWidth(140); } catch (Exception ignored) {}
 
-    colEdit.setCellFactory(tc -> new javafx.scene.control.TableCell<>() {
+        colEdit.setCellFactory(tc -> new javafx.scene.control.TableCell<>() {
             private final javafx.scene.control.Button btnEdit = new javafx.scene.control.Button("Editar");
             private final javafx.scene.control.Button btnDel = new javafx.scene.control.Button("Eliminar");
             private final javafx.scene.layout.HBox box = new javafx.scene.layout.HBox(6, btnEdit, btnDel);
@@ -386,17 +426,22 @@ public class UsuariosListController implements ViewLifecycle {
                             });
                             t.setOnFailed(ev -> {
                                 Throwable ex = t.getException();
-                                ex.printStackTrace();
-                                MessageToast.show(null, "Error eliminando usuario: " + (ex == null ? "desconocido" : ex.getMessage()), MessageToast.ToastType.ERROR);
+                                if (ex != null) ex.printStackTrace();
+                                String raw = ex == null ? "" : ex.getMessage();
+                                String msg = raw;
+                                if (raw != null && raw.contains("HTTP 409")) {
+                                    msg = "No se puede eliminar: el usuario está referenciado por otros registros.";
+                                }
+                                MessageToast.show(null, "Error eliminando usuario: " + (msg == null ? "desconocido" : msg), MessageToast.ToastType.ERROR);
                             });
                             Thread th = new Thread(t, "usuario-delete"); th.setDaemon(true); th.start();
                         }
                     });
                 });
-                btnEdit.getStyleClass().addAll("btn-small","btn-warning","icon-btn");
+                btnEdit.getStyleClass().addAll("btn-action-edit","icon-btn");
                 btnEdit.setText("Editar");
                 btnEdit.setTooltip(new javafx.scene.control.Tooltip("Editar usuario"));
-                btnDel.getStyleClass().addAll("btn-small","btn-danger","icon-btn");
+                btnDel.getStyleClass().addAll("btn-action-delete","icon-btn");
                 btnDel.setText("Eliminar");
                 btnDel.setTooltip(new javafx.scene.control.Tooltip("Eliminar usuario"));
             }
@@ -540,13 +585,9 @@ public class UsuariosListController implements ViewLifecycle {
 
     private void openNew() {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/usuarios_form.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/usuarios/fxml/usuarios_form.fxml"));
             javafx.scene.Parent root = loader.load();
-            javafx.stage.Stage st = new javafx.stage.Stage();
-            st.setTitle("Nuevo Usuario");
-            st.setScene(new javafx.scene.Scene(root));
-            st.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            st.showAndWait();
+            com.tracersoftware.common.ui.ModalUtils.showModalAndWait((javafx.stage.Stage) btnNew.getScene().getWindow(), root, "Nuevo Usuario");
             // after modal closes, refresh list
             loadData();
         } catch (Exception ex) {
@@ -730,6 +771,32 @@ public class UsuariosListController implements ViewLifecycle {
             }
         });
 
+        // Insert export bar above paginator, aligned to the right
+        try {
+            javafx.scene.Parent parent = paginator.getParent();
+            if (parent instanceof javafx.scene.layout.VBox vbox) {
+                int idx = vbox.getChildren().indexOf(paginator);
+                javafx.scene.layout.HBox bottomBar = new javafx.scene.layout.HBox(8);
+                javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+                javafx.scene.layout.HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+                java.util.concurrent.Callable<java.util.List<?>> fetchAll = () -> {
+                    int page = 0;
+                    int size = 500;
+                    java.util.List<com.fasterxml.jackson.databind.JsonNode> all = new java.util.ArrayList<>();
+                    while (true) {
+                        com.tracersoftware.usuarios.api.PagedResult pr = service.listUsersPaged(page, size);
+                        all.addAll(pr.getItems());
+                        page++;
+                        if (page >= pr.getTotalPages()) break;
+                    }
+                    return new java.util.ArrayList<>(all);
+                };
+                com.tracersoftware.common.controls.ExportBar exportBar = new com.tracersoftware.common.controls.ExportBar(tableUsers, "usuarios", fetchAll);
+                bottomBar.getChildren().addAll(spacer, exportBar);
+                vbox.getChildren().add(Math.max(0, idx), bottomBar);
+            }
+        } catch (Exception ignored) {}
+
         cancel.setOnAction(ae -> st.close());
 
         st.setScene(new javafx.scene.Scene(box));
@@ -738,20 +805,34 @@ public class UsuariosListController implements ViewLifecycle {
 
     private void openEdit(UsuarioDTO u) {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/usuarios_form.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/usuarios/fxml/usuarios_form.fxml"));
             javafx.scene.Parent root = loader.load();
             UsuarioFormController ctrl = loader.getController();
             if (ctrl != null) ctrl.setUsuario(u);
-            javafx.stage.Stage st = new javafx.stage.Stage();
-            st.setTitle("Editar Usuario");
-            st.setScene(new javafx.scene.Scene(root));
-            st.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            st.showAndWait();
+            com.tracersoftware.common.ui.ModalUtils.showModalAndWait((javafx.stage.Stage) btnNew.getScene().getWindow(), root, "Editar Usuario");
             // refresh list after edit
             loadData();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    // Enable dragging for undecorated stages using the accent bar (or whole root as fallback)
+    private void enableDragging(javafx.stage.Stage stage, javafx.scene.Parent root) {
+        try {
+            final double[] dragDelta = new double[2];
+            javafx.scene.Node dragHandle = root.lookup(".modal-accent");
+            if (dragHandle == null) dragHandle = root;
+            final javafx.scene.Node handle = dragHandle;
+            handle.setOnMousePressed(e -> {
+                dragDelta[0] = stage.getX() - e.getScreenX();
+                dragDelta[1] = stage.getY() - e.getScreenY();
+            });
+            handle.setOnMouseDragged(e -> {
+                stage.setX(e.getScreenX() + dragDelta[0]);
+                stage.setY(e.getScreenY() + dragDelta[1]);
+            });
+        } catch (Exception ignored) {}
     }
 
     private void showPage(int pageIndex, int pageSize) {

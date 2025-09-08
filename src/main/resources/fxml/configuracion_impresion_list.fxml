@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.tracersoftware.common.controls.SearchBar?>
+<?import com.tracersoftware.common.controls.PaginatorControl?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="com.tracersoftware.configuracion.impresion.controller.ConfiguracionImpresionListController"
+      spacing="10.0">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   
+   <!-- Header con título y controles -->
+   <HBox alignment="CENTER_LEFT" spacing="15.0">
+      <Label text="Configuración de Impresiones" styleClass="title-label" />
+      <Region HBox.hgrow="ALWAYS" />
+      
+      <!-- Controles de filtro -->
+      <ToggleButton fx:id="toggleSoloActivos" text="Solo Activos" />
+      <Button fx:id="btnNueva" text="+ Nueva Configuración" styleClass="button-primary" />
+   </HBox>
+   
+   <!-- Barra de búsqueda -->
+   <SearchBar fx:id="searchBar" promptText="Buscar por nombre, tipo de documento o impresora..." />
+   
+   <!-- Barra de exportación (placeholder) -->
+   <HBox fx:id="exportBarContainer" managed="false" visible="false" />
+   
+   <!-- Tabla de configuraciones -->
+   <TableView fx:id="table" VBox.vgrow="ALWAYS">
+      <columns>
+         <TableColumn fx:id="colId" text="ID" minWidth="80.0" prefWidth="80.0" />
+         <TableColumn fx:id="colNombre" text="Nombre" minWidth="200.0" prefWidth="200.0" />
+         <TableColumn fx:id="colTipoDocumento" text="Tipo Documento" minWidth="150.0" prefWidth="150.0" />
+         <TableColumn fx:id="colFormatoPapel" text="Formato Papel" minWidth="120.0" prefWidth="120.0" />
+         <TableColumn fx:id="colOrientacion" text="Orientación" minWidth="100.0" prefWidth="100.0" />
+         <TableColumn fx:id="colImpresora" text="Impresora" minWidth="150.0" prefWidth="150.0" />
+         <TableColumn fx:id="colEstado" text="Estado" minWidth="100.0" prefWidth="100.0" />
+         <TableColumn fx:id="colAcciones" text="Acciones" minWidth="120.0" prefWidth="120.0" sortable="false" />
+      </columns>
+      <columnResizePolicy>
+         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+      </columnResizePolicy>
+   </TableView>
+   
+   <!-- Paginación -->
+   <PaginatorControl fx:id="paginator" />
+   
+</VBox>

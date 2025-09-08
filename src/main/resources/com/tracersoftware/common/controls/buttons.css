@@ -24,12 +24,11 @@
 /* Global button styles for TracerSoftware JavaFX app */
 
 /* Modern flat blue button */
-.button-blue {
+.button-blue, .btn-action-update {
     -fx-background-color: #1976d2;
     -fx-text-fill: #fff;
     -fx-background-radius: 8;
-    -fx-font-size: 15px;
-    -fx-font-weight: 600;
+    -fx-font-weight: normal;
     -fx-padding: 10 28;
     -fx-cursor: hand;
     -fx-border-color: transparent;
@@ -40,46 +39,46 @@
     -fx-border-width: 2;
     -fx-transition: background-color 0.2s;
 }
-.button-blue:hover {
+.button-blue:hover, .btn-action-update:hover {
     -fx-background-color: #1565c0;
 }
-.button-blue:focused {
+.button-blue:focused, .btn-action-update:focused {
     -fx-border-color: #1565c0;
 }
 
-.button-red {
+.button-red, .btn-action-delete, .btn-action-cancel {
     -fx-background-color: #d32f2f;
     -fx-text-fill: white;
     -fx-background-radius: 6;
-    -fx-font-weight: bold;
+    -fx-font-weight: normal;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.18), 2,0,0,1);
 }
-.button-red:hover {
+.button-red:hover, .btn-action-delete:hover, .btn-action-cancel:hover {
     -fx-background-color: #b71c1c;
 }
 
-.button-green {
+.button-green, .btn-action-create {
     -fx-background-color: #388e3c;
     -fx-text-fill: white;
     -fx-background-radius: 6;
-    -fx-font-weight: bold;
+    -fx-font-weight: normal;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(56,142,60,0.18), 2,0,0,1);
 }
-.button-green:hover {
+.button-green:hover, .btn-action-create:hover {
     -fx-background-color: #2e7d32;
 }
 
-.button-yellow {
+.button-yellow, .btn-action-edit {
     -fx-background-color: #fbc02d;
     -fx-text-fill: #333;
     -fx-background-radius: 6;
-    -fx-font-weight: bold;
+    -fx-font-weight: normal;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(251,192,45,0.18), 2,0,0,1);
 }
-.button-yellow:hover {
+.button-yellow:hover, .btn-action-edit:hover {
     -fx-background-color: #f9a825;
 }
 
@@ -87,7 +86,7 @@
     -fx-background-color: #757575;
     -fx-text-fill: white;
     -fx-background-radius: 6;
-    -fx-font-weight: bold;
+    -fx-font-weight: normal;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(117,117,117,0.18), 2,0,0,1);
 }
@@ -99,7 +98,7 @@
     -fx-background-color: #7b1fa2;
     -fx-text-fill: white;
     -fx-background-radius: 6;
-    -fx-font-weight: bold;
+    -fx-font-weight: normal;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(123,31,162,0.18), 2,0,0,1);
 }
@@ -112,12 +111,23 @@
     -fx-font-size: 14px;
     -fx-border-width: 0;
     -fx-transition: all 0.2s;
+    -fx-font-family: 'Segoe UI', 'Arial', sans-serif;
 }
 
 /* Utility small buttons used in tables */
 .btn-small {
     -fx-font-size: 12px;
-    -fx-padding: 4 8;
+    -fx-padding: 4 10;
+    -fx-background-radius: 6;
+}
+/* Alias de tamaño para acciones comunes */
+.btn-action-edit,
+.btn-action-delete,
+.btn-action-update,
+.btn-action-create,
+.btn-action-cancel {
+    -fx-font-size: 12px;
+    -fx-padding: 4 10;
     -fx-background-radius: 6;
 }
 

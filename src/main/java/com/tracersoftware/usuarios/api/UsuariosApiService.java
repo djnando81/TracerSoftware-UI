@@ -78,17 +78,9 @@ public class UsuariosApiService {
         apiClient.deleteJson("/api/usuarios/" + id);
     }
 
-    // Toggle 'activo' via dedicated endpoint; sends both boolean and int for compatibility
+    // Toggle 'activo' via dedicated endpoint (sin body, el servidor alterna automáticamente)
     public JsonNode toggleActivo(int id, boolean activo) throws IOException, InterruptedException, com.tracersoftware.api.UnauthorizedException {
-        com.fasterxml.jackson.databind.node.ObjectNode body = mapper.createObjectNode();
-        body.put("activo", activo);
-        body.put("estado", activo ? 1 : 0);
-        String json = body.toString();
-        try {
-            return apiClient.postJson("/api/usuarios/" + id + "/toggle-estado", json);
-        } catch (IOException ex) {
-            // alternate route name seen in some modules
-            return apiClient.postJson("/api/usuarios/" + id + "/toggle-activo", json);
-        }
+        // El endpoint toggle-estado no necesita body, alterna automáticamente
+        return apiClient.putJson("/api/usuarios/" + id + "/toggle-estado", "");
     }
 }

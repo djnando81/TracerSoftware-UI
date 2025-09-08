@@ -41,6 +41,8 @@ public class DashboardController {
     private javafx.scene.control.Button btnStaticReportes;
     @FXML
     private javafx.scene.control.Button btnStaticSettings;
+    private VBox sidebarRef;
+    private VBox collapsedPaneRef;
 
     @FXML
     public void initialize() {
@@ -74,6 +76,14 @@ public class DashboardController {
                                 // normalizar: route puede venir como "/dashboard" o "dashboard"
                                 String name = route.startsWith("/") ? route.substring(1) : route;
                                 String fxmlPath = "/fxml/" + name + ".fxml";
+                                // fallback: try module-based path '/<module>/fxml/<name>.fxml' if default not found
+                                if (getClass().getResource(fxmlPath) == null) {
+                                    String module = name.contains("_") ? name.substring(0, name.indexOf('_')) : name;
+                                    String alt = "/" + module + "/fxml/" + name + ".fxml";
+                                    if (getClass().getResource(alt) != null) {
+                                        fxmlPath = alt;
+                                    }
+                                }
                                 System.out.println("[DashboardController] navigate received route='" + route + "', normalized='" + name + "', trying fxml='" + fxmlPath + "'");
                                 try { MessageToast.show(null, "Cargando: " + name, MessageToast.ToastType.INFO); } catch (Exception ignored) {}
                                 if (getClass().getResource(fxmlPath) != null) {
@@ -135,6 +145,7 @@ public class DashboardController {
 
             // Reemplaza el panel izquierdo existente solo si rootPane y sidebar existen
             if (rootPane != null && sidebar != null) {
+                this.sidebarRef = sidebar;
                 rootPane.setLeft(sidebar);
             }
 
@@ -166,6 +177,13 @@ public class DashboardController {
             if (route == null || route.isEmpty()) return;
             String name = route.startsWith("/") ? route.substring(1) : route;
             String fxmlPath = "/fxml/" + name + ".fxml";
+            if (getClass().getResource(fxmlPath) == null) {
+                String module = name.contains("_") ? name.substring(0, name.indexOf('_')) : name;
+                String alt = "/" + module + "/fxml/" + name + ".fxml";
+                if (getClass().getResource(alt) != null) {
+                    fxmlPath = alt;
+                }
+            }
             System.out.println("[DashboardController] navigateTo route='" + route + "' -> fxml='" + fxmlPath + "'");
             try { MessageToast.show(null, "Cargando: " + name, MessageToast.ToastType.INFO); } catch (Exception ignored) {}
             if (getClass().getResource(fxmlPath) != null) {

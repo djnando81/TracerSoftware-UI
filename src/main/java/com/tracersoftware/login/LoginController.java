@@ -33,6 +33,8 @@ public class LoginController {
     @FXML
     private javafx.scene.control.Label apiStatusLabel;
     @FXML
+    private javafx.scene.control.Label apiStatusDetailLabel;
+    @FXML
     private Button reconnectButton;
 
     private ApiService apiService;
@@ -44,7 +46,34 @@ public class LoginController {
         // Verificar conectividad con la API en un hilo aparte para no bloquear la carga
         new Thread(() -> {
             boolean apiOk = apiService.pingApi();
-            javafx.application.Platform.runLater(() -> updateApiStatus(apiOk));
+            if (!apiOk) {
+                String current = ConfigManager.getUrlBase();
+                String[] candidates = new String[] { current, "https://localhost:5001", "http://localhost:5000" };
+                for (String c : candidates) {
+                    if (c == null || c.isBlank()) continue;
+                    if (apiService.pingApiAgainst(c)) {
+                        ConfigManager.setAndSave("api.urlBase", c);
+                        apiService.setUrlBase(c);
+                        apiOk = true;
+                        break;
+                    }
+                }
+            }
+            final boolean ok = apiOk;
+            javafx.application.Platform.runLater(() -> {
+                updateApiStatus(ok);
+                try {
+                    String base = ConfigManager.getUrlBase();
+                    String url = null; String reason = null;
+                    try { url = apiService.getLastPingUrl(); } catch (Exception ignored) {}
+                    try { reason = apiService.getLastPingError(); } catch (Exception ignored) {}
+                    StringBuilder sb = new StringBuilder();
+                    if (base != null) sb.append("Base: ").append(base);
+                    if (url != null && (base == null || !url.equals(base))) sb.append(sb.length()>0?" • ":"").append("URL: ").append(url);
+                    if (reason != null && !reason.isBlank()) sb.append(sb.length()>0?" • ":"").append("Error: ").append(reason);
+                    if (apiStatusDetailLabel != null) apiStatusDetailLabel.setText(sb.toString());
+                } catch (Exception ignored) {}
+            });
         }).start();
 
         // Sincronizar campos de contraseña
@@ -59,6 +88,8 @@ public class LoginController {
             }
         });
         togglePasswordButton.setOnAction(e -> togglePasswordVisibility());
+        // Reasignar handler para Reconectar con lógica mejorada y detalle de error/puerto
+        try { if (reconnectButton != null) reconnectButton.setOnAction(e -> onReconnectEnhanced()); } catch (Exception ignored) {}
         // Inicialmente ocultar campo visible
         passwordVisibleField.setVisible(false);
         passwordVisibleField.setManaged(false);
@@ -254,4 +285,39 @@ public class LoginController {
     }
 
     // showError eliminado, se usa MessageToast
+
+    // Nuevo handler con autodetección de puerto y detalle de error
+    private void onReconnectEnhanced() {
+        boolean apiOk = apiService.pingApi();
+        if (!apiOk) {
+            String current = ConfigManager.getUrlBase();
+            String[] candidates = new String[] { current, "https://localhost:5001", "http://localhost:5000" };
+            for (String c : candidates) {
+                if (c == null || c.isBlank()) continue;
+                if (apiService.pingApiAgainst(c)) {
+                    ConfigManager.setAndSave("api.urlBase", c);
+                    apiService.setUrlBase(c);
+                    apiOk = true;
+                    break;
+                }
+            }
+        }
+        updateApiStatus(apiOk);
+        try {
+            String base = ConfigManager.getUrlBase();
+            String url = null; String reason = null;
+            try { url = apiService.getLastPingUrl(); } catch (Exception ignored) {}
+            try { reason = apiService.getLastPingError(); } catch (Exception ignored) {}
+            StringBuilder sb = new StringBuilder();
+            if (base != null) sb.append("Base: ").append(base);
+            if (url != null && (base == null || !url.equals(base))) sb.append(sb.length()>0?" • ":"").append("URL: ").append(url);
+            if (reason != null && !reason.isBlank()) sb.append(sb.length()>0?" • ":"").append("Error: ").append(reason);
+            if (apiStatusDetailLabel != null) apiStatusDetailLabel.setText(sb.toString());
+        } catch (Exception ignored) {}
+        if (apiOk) {
+            MessageToast.show((Stage) loginButton.getScene().getWindow(), "Conexión restablecida con la API", MessageToast.ToastType.SUCCESS);
+        } else {
+            MessageToast.show((Stage) loginButton.getScene().getWindow(), "No se pudo conectar. Verifique el puerto en config.ini", MessageToast.ToastType.ERROR);
+        }
+    }
 }

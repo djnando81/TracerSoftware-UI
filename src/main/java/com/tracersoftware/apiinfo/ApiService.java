@@ -15,6 +15,8 @@ public class ApiService {
     private String authToken; // Token JWT o similar
     private String lastLoginResponseJson;
     private final ObjectMapper mapper = new ObjectMapper();
+    private String lastPingError;
+    private String lastPingUrl;
 
     public ApiService(String urlBase) {
         this.urlBase = urlBase;
@@ -22,9 +24,12 @@ public class ApiService {
 
     public boolean pingApi() {
         try {
-            URL url = new URL(normalize(urlBase) + "/api/apiinfo/health");
+            String target = normalize(urlBase) + "/api/apiinfo/health";
+            this.lastPingUrl = target;
+            URL url = new URL(target);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
             conn.setConnectTimeout(3000);
             // Si hay token, agregarlo
             String token = SessionManager.getAuthToken();
@@ -33,11 +38,38 @@ public class ApiService {
             }
             conn.connect();
             int code = conn.getResponseCode();
-            return code == 200;
+            if (code == 200) {
+                this.lastPingError = null;
+                return true;
+            } else {
+                String body = null;
+                try {
+                    java.io.InputStream es = conn.getErrorStream();
+                    body = es != null ? new String(es.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8) : "";
+                } catch (Exception ignored) {}
+                this.lastPingError = "HTTP " + code + (body != null && !body.isBlank() ? (": " + body) : "");
+                return false;
+            }
         } catch (IOException e) {
+            this.lastPingError = e.getClass().getSimpleName() + ": " + (e.getMessage() == null ? "(sin mensaje)" : e.getMessage());
             return false;
         }
     }
+
+    public boolean pingApiAgainst(String base) {
+        String prev = this.urlBase;
+        try {
+            this.urlBase = base;
+            return pingApi();
+        } finally {
+            this.urlBase = prev;
+        }
+    }
+
+    public void setUrlBase(String base) { this.urlBase = base; }
+    public String getUrlBase() { return this.urlBase; }
+    public String getLastPingError() { return lastPingError; }
+    public String getLastPingUrl() { return lastPingUrl; }
 
     /**
      * Realiza login contra la API. Si es exitoso, guarda el token para futuras llamadas.
