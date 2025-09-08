@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.tracersoftware.common.controls.PaginatorControl?>
+<?import com.tracersoftware.common.controls.SearchBar?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.materiasprimas.controller.MateriasPrimasListController">
+    <center>
+        <VBox spacing="8" style="-fx-padding:12;" fillWidth="true">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Region HBox.hgrow="ALWAYS" />
+                <SearchBar fx:id="searchBar" />
+                <Button fx:id="btnNew" text="Nuevo" />
+            </HBox>
+            <ScrollPane VBox.vgrow="ALWAYS" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED" fitToWidth="false" fitToHeight="true">
+                <TableView fx:id="table">
+                    <columns>
+                        <TableColumn text="ID" fx:id="colId" />
+                        <TableColumn text="Nombre" fx:id="colNombre" />
+                        <TableColumn text="Código Interno" fx:id="colCodigoInterno" />
+                        <TableColumn text="Unidad" fx:id="colUnidad" />
+                        <TableColumn text="Categoría" fx:id="colCategoria" />
+                        <TableColumn text="Origen" fx:id="colOrigen" />
+                        <TableColumn text="Activa" fx:id="colActiva" />
+                        <TableColumn text="Stock Actual" fx:id="colStockActual" />
+                        <TableColumn text="Stock Mín" fx:id="colStockMin" />
+                        <TableColumn text="Stock Máx" fx:id="colStockMax" />
+                        <TableColumn text="Costo Unitario" fx:id="colCosto" />
+                        <TableColumn text="Acciones" fx:id="colAcciones" />
+                    </columns>
+                </TableView>
+            </ScrollPane>
+            <!-- OBLIGATORIO: Contenedor para ExportBar (alineado a la derecha) -->
+            <HBox fx:id="exportBarContainer" spacing="8" alignment="CENTER_RIGHT" />
+            <!-- OBLIGATORIO: Paginador al final -->
+            <PaginatorControl fx:id="paginator" />
+        </VBox>
+    </center>
+</BorderPane>

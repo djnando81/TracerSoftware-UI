@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.tracersoftware.common.controls.PaginatorControl?>
+<?import com.tracersoftware.common.controls.SearchBar?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.entradamp.controller.EntradaMpListController">
+    <center>
+        <VBox spacing="8" style="-fx-padding:12;" fillWidth="true">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Entradas - Materia Prima" style="-fx-font-size:16px; -fx-font-weight:bold;" />
+                <Region HBox.hgrow="ALWAYS" />
+                <SearchBar fx:id="searchBar" />
+                <Button fx:id="btnNuevo" text="Nueva Entrada" />
+            </HBox>
+            
+            <TableView fx:id="table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="ID" fx:id="colId" />
+                    <TableColumn text="Número Entrada" fx:id="colNumeroEntrada" />
+                    <TableColumn text="Proveedor" fx:id="colProveedor" />
+                    <TableColumn text="Fecha Entrada" fx:id="colFechaEntrada" />
+                    <TableColumn text="Materias Primas" fx:id="colMateriasPrimas" />
+                    <TableColumn text="Estado" fx:id="colEstado" />
+                    <TableColumn text="Acciones" fx:id="colAcciones" />
+                </columns>
+            </TableView>
+            
+            <PaginatorControl fx:id="paginator" />
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import com.tracersoftware.common.controls.PaginatorControl?>
+<?import com.tracersoftware.common.controls.SearchBar?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tracersoftware.usuarios.controller.UsuariosListController">
+    <center>
+        <VBox spacing="8" style="-fx-padding:12;" fillWidth="true">
+            <!-- OBLIGATORIO: Header con título, SearchBar y botón Nuevo -->
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Usuarios" style="-fx-font-size:16px; -fx-font-weight:bold;" />
+                <Region HBox.hgrow="ALWAYS" />
+                <SearchBar fx:id="searchBar" />
+                <Button fx:id="btnNew" text="Nuevo" />
+            </HBox>
+            
+            <Label fx:id="lblError" textFill="red" wrapText="true" visible="false" managed="false" />
+            
+            <!-- OBLIGATORIO: Tabla principal con columnas estándar -->
+            <StackPane VBox.vgrow="ALWAYS">
+                <TableView fx:id="tableUsers" prefHeight="400" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="ID" fx:id="colId" />
+                        <TableColumn text="Nombre" fx:id="colNombre" />
+                        <TableColumn text="Rol" fx:id="colRol" />
+                        <TableColumn text="Email" fx:id="colEmail" />
+                        <TableColumn text="Activo" fx:id="colActivo" />
+                        <TableColumn text="Acciones" fx:id="colEdit" />
+                    </columns>
+                </TableView>
+                <!-- container where row overlays will be added programmatically -->
+                <Pane fx:id="rowOverlayPane" pickOnBounds="false" />
+            </StackPane>
+            
+            <!-- OBLIGATORIO: Contenedor para ExportBar (alineado a la derecha) -->
+            <HBox fx:id="exportBarContainer" spacing="8" alignment="CENTER_RIGHT" />
+            <!-- OBLIGATORIO: Paginador al final -->
+            <PaginatorControl fx:id="paginator" />
+        </VBox>
+    </center>
+</BorderPane>

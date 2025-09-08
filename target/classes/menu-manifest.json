@@ -2,21 +2,27 @@
   "title": "Tracer Dashboard",
   "items": [
     { "id": "dashboard", "label": "Dashboard", "icon": "fa5s-home", "route": "/dashboard" },
-    { "id": "orders", "label": "Órdenes", "icon": "fa5s-box", "route": "/orders" },
-    { "id": "inventory", "label": "Inventario", "icon": "fa5s-warehouse", "route": "/inventory" },
-    { "id": "almacenes", "label": "Almacenes", "icon": "fa5s-warehouse", "route": "/almacenes_list" },
-    { "id": "reports", "label": "Reportes", "icon": "fa5s-chart-line", "route": "/reports" },
-    { "id": "usuarios", "label": "Usuarios", "icon": "fa5s-users", "route": "/usuarios_list" },
+    { "id": "almacenes", "label": "Almacenes", "icon": "fa5s-warehouse", "children": [
+      { "id": "almacenes_list", "label": "Lista de Almacenes", "icon": "fa5s-list", "route": "/almacenes_list" },
+      { "id": "almacenmp_list", "label": "Almacén Materia Prima", "icon": "fa5s-boxes", "route": "/almacenmp_list" }
+    ] },
     { "id": "materiasprimas", "label": "Materias Primas", "icon": "fa5s-vials", "children": [
       { "id": "mp_admin", "label": "Administración", "icon": "fa5s-clipboard-list", "route": "/materiasprimas_list" },
       { "id": "mp_recepcion", "label": "Recepción de Materia Prima", "icon": "fa5s-truck-loading", "route": "/materiasprimas_recepcion" },
       { "id": "mp_inventario", "label": "Inventario", "icon": "fa5s-boxes", "route": "/materiasprimas_inventario" },
       { "id": "mp_categorias", "label": "Categorías", "icon": "fa5s-tags", "route": "/categoriasmateriaprima_list" },
-      { "id": "mp_almacenes", "label": "Almacenes MP", "icon": "fa5s-warehouse", "route": "/almacenes_list" },
+      { "id": "mp_entradas", "label": "Entradas MP", "icon": "fa5s-truck-loading", "route": "/entradamp_list" },
       { "id": "mp_proveedores", "label": "Proveedores", "icon": "fa5s-people-carry", "route": "/proveedores_list" }
     ] },
+    { "id": "ordenes", "label": "Órdenes y Pedidos", "icon": "fa5s-clipboard-list", "children": [
+      { "id": "orden_pedido", "label": "Órdenes de Pedido", "icon": "fa5s-shopping-cart", "route": "/ordenpedido_list" },
+      { "id": "orden_pedido_mp", "label": "Órdenes Pedido MP", "icon": "fa5s-industry", "route": "/ordenpedidomateriaprima_list" }
+    ] },
+    { "id": "usuarios", "label": "Usuarios", "icon": "fa5s-users", "route": "/usuarios_list" },
     { "id": "settings", "label": "Configuración", "icon": "fa5s-cog", "children": [
-      { "id": "roles", "label": "Roles", "icon": "fa5s-user-shield", "route": "/roles_list" }
-    ] }
+      { "id": "roles", "label": "Roles", "icon": "fa5s-user-shield", "route": "/roles_list" },
+      { "id": "config_impresion", "label": "Configuración Impresión", "icon": "fa5s-print", "route": "/configuracion_impresion_list" }
+    ] },
+    { "id": "reports", "label": "Reportes", "icon": "fa5s-chart-line", "route": "/reports" }
   ]
 }
